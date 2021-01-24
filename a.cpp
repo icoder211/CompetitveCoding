@@ -9,74 +9,115 @@ using namespace std;
  
 typedef long double ld;
 typedef long long ll;
- 
-int n;
-int a[2002];
-set<int> s;
-vector<pair<int, int>> ans;
-bool f(int i, int p) {
-	if(i < 0) return true;
-	if(s.count(i)) return f(i-1, p);
-	int st = lower_bound(a, a+i, p - a[i]) - a;
-	if(st >= 0 and st < i and a[st] == p - a[i]) {
-		// good
-		int ed = upper_bound(a, a+i, p - a[i]) - a;
-		int j = st;
-		while(j < ed and s.count(j)) {
-			j++;
-		}
-		if(j == ed or j == i) return false;
-		s.insert(j);
-		ans.pb({j, i});
-		return f(i-1, a[i]);
-	}else {
-		return false;
+
+
+ll n, m;
+pair<ll, ll>  a[100005];
+vector<set<ll>> ad;
+vector<pair<ll, ll>> s;
+
+// int lk[100005];
+// int sz[100005];
+// int find(int s) {
+// 	while(s != lk[s]) s = lk[s];
+// 	return s;
+// }
+// void unite(int s, int t) {
+// 	s = find(s);
+// 	t = find(t);
+// 	if(s == t) return;
+// 	if(sz[s] < sz[t]) swap(s, t);
+// 	lk[t] = s;
+// 	sz[s] += sz[t];
+// }
+vector<ll> vis;
+vector<ll> ans;
+vector<ll> cur = {};
+ll szz = 0;
+void dfs(ll s) {
+	// unite(rep, s);
+	cur.pb(s);
+	szz++;
+	vis[s] = 1;
+	for(auto u: ad[s]) {
+		if(vis[u] > 0) continue;
+		dfs(u);
 	}
- 
 }
+
 void go() {
-	cin >> n;
-	int cnt[1000006] = {0};
- 
-	bool ok = true;
-	forn(i, 2*n) {
-		cin >> a[i];
-		cnt[a[i]]++;
-		if(cnt[a[i]] > 100) ok = false; 
+	cin >> n >> m;
+	priority_queue<pair<ll, ll>> qq;
+	forn(i,n) {
+		cin >> a[i].first;
+		a[i].second = i;
+		qq.push({a[i].first, a[i].second});
 	}
-	sort(a, a+2*n);
-	if(!ok) {
-		cout << "NO\n";
+	szz = 0;
+	ans.assign(n, -1);
+	// forn(i, n) {
+	// 	lk[i] = i;
+	// 	sz[i] = 1;
+	// }
+	vis.assign(n, 0);
+	ad.assign(n, {});
+	s.assign(n, {});
+	
+	// sort(a,a+n);reverse(a, a+n);
+	forn(i, m) {
+		ll t, ss;cin >> t >> ss;
+		t--;
+		ss--;
+		// unite(t, s);
+		if(t == ss) continue;
+		ad[t].insert(ss);
+		ad[ss].insert(t);
+	}
+	if(n == 1) {
+		cout << 1 << ln;
 		return;
 	}
-	
-	forn(i,2*n - 1) {
-		// cout << i << ln;
-		ans.clear();
-		s.clear();
-		if(f(2*n-1, a[2*n-1] + a[i])) {
-			cout << "YES\n";
-			cout << a[ans[0].first] + a[ans[0].second] << ln;
-			for(auto u: ans) {
-				cout << a[u.first] << " " << a[u.second] << ln;
-			}
-			return;
+	priority_queue<pair<ll, ll>> q;
+	forn(i, n) {
+		cur.clear();szz = 0;
+		if(vis[i] > 0) continue;
+		dfs(i);
+		for(auto u: cur) {
+			q.push({szz, u});
 		}
-		// else if(!ans.empty()) {
-		// 	cout << a[ans[0].first] + a[ans[0].second] << ln;
-		// 	for(auto u: ans) {
-		// 		cout << a[u.first] << " " << a[u.second] << ln;
-		// 	}
-		// }
 	}
-	cout << "NO\n";
+	cur.clear();szz = 0;
+	ll i = 0;
+	set<ll> chk;
+
+	assert(q.size() == n);
+	assert(qq.size() == n);
+	while(!q.empty()) {
+		auto u = q.top();
+		q.pop();
+		auto uu = qq.top();
+		qq.pop();
+		// assert(uu.second >= 0 and uu.second < n and u.second >= 0 and u.second < n);
+		// assert(ans[uu.second] == -1);
+		// assert(!chk.count(u.second));
+		ans[uu.second] = u.second;
+		// chk.insert(u.second);
+	}
+	forn(i, n) {
+		cout << ans[i] + 1ll << " ";
+	}
+	cout << ln;
+
 }
- 
+
+
+
+
 int main() {
     IO;
-    
-	int t;cin >> t;
-	while(t--) 
+    fflush(stdout);
+	// int t;cin >> t;
+	// while(t--) 
 	go();
 	
 	
