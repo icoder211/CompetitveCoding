@@ -10,114 +10,104 @@ using namespace std;
 typedef long double ld;
 typedef long long ll;
 
+int n, h;
+int a[200000];
+int t[400000];
+vector<int> d;
 
-ll n, m;
-pair<ll, ll>  a[100005];
-vector<set<ll>> ad;
-vector<pair<ll, ll>> s;
-
-// int lk[100005];
-// int sz[100005];
-// int find(int s) {
-// 	while(s != lk[s]) s = lk[s];
-// 	return s;
-// }
-// void unite(int s, int t) {
-// 	s = find(s);
-// 	t = find(t);
-// 	if(s == t) return;
-// 	if(sz[s] < sz[t]) swap(s, t);
-// 	lk[t] = s;
-// 	sz[s] += sz[t];
-// }
-vector<ll> vis;
-vector<ll> ans;
-vector<ll> cur = {};
-ll szz = 0;
-void dfs(ll s) {
-	// unite(rep, s);
-	cur.pb(s);
-	szz++;
-	vis[s] = 1;
-	for(auto u: ad[s]) {
-		if(vis[u] > 0) continue;
-		dfs(u);
-	}
+void build(int i) {
+	i /= 2;
+	for(;i > 0;i /= 2) t[i] = t[i<<1] + t[i<<1|1];
 }
-
-void go() {
-	cin >> n >> m;
-	priority_queue<pair<ll, ll>> qq;
-	forn(i,n) {
-		cin >> a[i].first;
-		a[i].second = i;
-		qq.push({a[i].first, a[i].second});
-	}
-	szz = 0;
-	ans.assign(n, -1);
-	// forn(i, n) {
-	// 	lk[i] = i;
-	// 	sz[i] = 1;
-	// }
-	vis.assign(n, 0);
-	ad.assign(n, {});
-	s.assign(n, {});
-	
-	// sort(a,a+n);reverse(a, a+n);
-	forn(i, m) {
-		ll t, ss;cin >> t >> ss;
-		t--;
-		ss--;
-		// unite(t, s);
-		if(t == ss) continue;
-		ad[t].insert(ss);
-		ad[ss].insert(t);
-	}
-	if(n == 1) {
-		cout << 1 << ln;
-		return;
-	}
-	priority_queue<pair<ll, ll>> q;
-	forn(i, n) {
-		cur.clear();szz = 0;
-		if(vis[i] > 0) continue;
-		dfs(i);
-		for(auto u: cur) {
-			q.push({szz, u});
+void apply(int p, int tk) {
+	if(tk == -1) t[p] = 0;
+	else t[p] = 1;
+	if(p < n) d[p] = tk;
+}
+void push(int p) {
+	for(int s = h;s > 0;s--) {
+		int i = p >> s;
+		if(d[i] != 0) {
+			apply(i<<1, d[i]);
+			apply(i<<1|1, d[i]);
+			d[i] = 0;
 		}
 	}
-	cur.clear();szz = 0;
-	ll i = 0;
-	set<ll> chk;
-
-	assert(q.size() == n);
-	assert(qq.size() == n);
-	while(!q.empty()) {
-		auto u = q.top();
-		q.pop();
-		auto uu = qq.top();
-		qq.pop();
-		// assert(uu.second >= 0 and uu.second < n and u.second >= 0 and u.second < n);
-		// assert(ans[uu.second] == -1);
-		// assert(!chk.count(u.second));
-		ans[uu.second] = u.second;
-		// chk.insert(u.second);
-	}
-	forn(i, n) {
-		cout << ans[i] + 1ll << " ";
-	}
-	cout << ln;
-
 }
-
-
-
+void mod(int l, int r, int tk) {
+	l += n;int l0 = l;
+	r += n;int r0 = r;
+	while(l < r) {
+		if(l&1) apply(l++, tk);
+		if(r&1) apply(--r, tk);
+		l /= 2;
+		r /= 2;
+	}
+	build(l0);
+	build(r0-1);
+}
+int query(int l, int r) {
+	int res = 0;
+	l += n;
+	r += n;
+	push(l);
+	push(r-1);
+	while(l < r) {
+		if(l&1) res += t[l++];
+		if(r&1) res += t[--r];
+		l /= 2;r /= 2;
+	}
+	return res;
+}
+int q;
+void go() {
+	cin >> n >> q;
+	h = 32 - __builtin_clz(n);
+	d.assign(2*n, 0);
+	string s, f;
+	cin >> s >> f;
+	forn(i, n) {
+		a[i] = ((int)f[i] - 48);
+		t[i+n] = a[i];
+	}
+	for(int i = n-1;i > 0;i--) {
+		t[i] = t[i<<1] + t[i<<1|1];
+	}
+	vector<pair<int, int>> qu;
+	forn(i,q) {
+		int w,e;cin >> w >> e;
+		qu.pb({w,e});
+	}
+	reverse(all(qu));
+	forn(i, q) {
+		int l = qu[i].first;l--;
+		int r = qu[i].second;
+		int d = (r-l)/2;
+		if((r-l) % 2 == 0) d--;
+		cout << query(l, r) << " ";
+		if(query(l, r) > d) {
+			mod(l, r, 1);
+		} else {
+			mod(l, r, -1);
+			cout << "L\n";
+		}
+	}
+	forsn(i,1,2*n) push(i);
+	forn(i,n) {
+		if(t[n+i] != s[i]-48) {
+			cout << "NO\n";
+			return;
+		}
+	}
+	cout << "YES\n";
+	return;
+}
 
 int main() {
     IO;
     fflush(stdout);
-	// int t;cin >> t;
-	// while(t--) 
+	int t;cin >> t;
+	while(t--) 
 	go();
 	
 	
