@@ -9,106 +9,164 @@ using namespace std;
  
 typedef long double ld;
 typedef long long ll;
-
-int n, h;
-int a[200000];
-int t[400000];
-vector<int> d;
-
-void build(int i) {
-	i /= 2;
-	for(;i > 0;i /= 2) t[i] = t[i<<1] + t[i<<1|1];
-}
-void apply(int p, int tk) {
-	if(tk == -1) t[p] = 0;
-	else t[p] = 1;
-	if(p < n) d[p] = tk;
-}
-void push(int p) {
-	for(int s = h;s > 0;s--) {
-		int i = p >> s;
-		if(d[i] != 0) {
-			apply(i<<1, d[i]);
-			apply(i<<1|1, d[i]);
-			d[i] = 0;
-		}
-	}
-}
-void mod(int l, int r, int tk) {
-	l += n;int l0 = l;
-	r += n;int r0 = r;
-	while(l < r) {
-		if(l&1) apply(l++, tk);
-		if(r&1) apply(--r, tk);
-		l /= 2;
-		r /= 2;
-	}
-	build(l0);
-	build(r0-1);
-}
-int query(int l, int r) {
-	int res = 0;
-	l += n;
-	r += n;
-	push(l);
-	push(r-1);
-	while(l < r) {
-		if(l&1) res += t[l++];
-		if(r&1) res += t[--r];
-		l /= 2;r /= 2;
+ 
+ll exp(ll n, ll m, ll md) {
+	ll res = 1;
+	while(m > 0) {
+		if(m&1) res = (res * 1ll * n) % md;
+		n = (n*n) % md;
+		m /= 2;
 	}
 	return res;
 }
-int q;
-void go() {
-	cin >> n >> q;
-	h = 32 - __builtin_clz(n);
-	d.assign(2*n, 0);
-	string s, f;
-	cin >> s >> f;
+ 
+// ll n, m;
+// // ll a[200005];
+// // vector<int> cnt;
+// void go() {
+// 	cin >> n >> m;
+// 	if(n&1) {
+// 		cout << n/2 << " " << n/2 << " " << 1 << ln;
+// 		return;
+// 	}
+// 	if(n%3 == 0) {
+// 		cout << n/3 << " " << n/3 << " " << n/3 << ln;
+// 		return;
+// 	}
+// 	if(n%4 > 0) cout << n/2-1 << " " << n/2-1 << " " << 2 << ln;
+// 	else cout << n/4 << " " << n/4 << " " << n/2 << ln;
+ 
+	
+// }
+ 
+// void go1() {
+// 	cin >> n >> m;
+// 	if(m >= n/2 + 1) {
+// 		forn(i,m-1) cout << 1 << " ";
+// 		cout << n - m + 1 << ln;
+// 		return;
+// 	}
+// 	if( m <= 30 && n % (1ll << (ll)(m-1)) == 0) {
+// 		cout << n / (1ll << (m-1)) << " ";
+// 		while(m > 1) {
+// 			cout << n / (1ll << (m-1)) << " ";
+// 			m --;
+// 		}
+// 		cout << ln;
+// 		return;
+// 	}
+	
+// 	forn(i, m-1) {
+// 		if((n-i) % (m-i) == 0) {
+// 			forn(j, m-i) {
+// 				cout << ((n-i) / (m-i)) << " ";
+// 			}
+// 			forn(j, i) cout << 1 << " ";
+// 			cout << ln;
+// 			return;
+// 		}
+// 	}
+// 	assert(2 > 3);
+// }
+ 
+ 
+int n, k;
+int a[200005];
+vector<int> vis;
+set<int> s;
+vector<set<int>> v;
+vector<int> pr;
+vector<int> comb;
+set<int> same;
+void go2() {
+	cin >> n >> k;
+	int ans = 1;
+	s.clear();
+	comb.clear();
+	// comb.pb(0);
+	v.clear();
+	forn(i, n) cin >> a[i];
+	int T = 0;
 	forn(i, n) {
-		a[i] = ((int)f[i] - 48);
-		t[i+n] = a[i];
-	}
-	for(int i = n-1;i > 0;i--) {
-		t[i] = t[i<<1] + t[i<<1|1];
-	}
-	vector<pair<int, int>> qu;
-	forn(i,q) {
-		int w,e;cin >> w >> e;
-		qu.pb({w,e});
-	}
-	reverse(all(qu));
-	forn(i, q) {
-		int l = qu[i].first;l--;
-		int r = qu[i].second;
-		int d = (r-l)/2;
-		if((r-l) % 2 == 0) d--;
-		cout << query(l, r) << " ";
-		if(query(l, r) > d) {
-			mod(l, r, 1);
-		} else {
-			mod(l, r, -1);
-			cout << "L\n";
+		int p = a[i];
+		int d = 0;
+		int ss = 1;
+		while(p > 1 and d < pr.size()) {
+			int cnt = 0;
+			while(p%pr[d]==0) {
+				p/=pr[d];
+				cnt++;
+			}
+			if(cnt%2 == 1) ss *= pr[d];
+			d ++;
 		}
-	}
-	forsn(i,1,2*n) push(i);
-	forn(i,n) {
-		if(t[n+i] != s[i]-48) {
-			cout << "NO\n";
-			return;
-		}
-	}
-	cout << "YES\n";
-	return;
-}
+		if(p > 1) ss *= p;
 
+		if(s.count(ss)) {
+			v.pb(s);
+			s.clear();
+			comb.pb(0);
+			ans ++;
+		}
+		// else {
+		// 	if(!v.empty()) {
+		// 		if(v.back().count(ss)) comb.back()++;
+		// 	}
+		// }
+		if(v.empty()) {
+			same.insert(ss);
+		}else {
+			if(same.count(ss)) {
+				comb.back()++;
+				same.erase(ss);
+			}else {
+				same.insert(ss);
+			}
+		}
+		s.insert(ss);
+		a[i] = ss;
+		if(i == n-1) {
+			v.pb(s);
+		}
+	}
+	forn(i, comb.size()-1) {
+		comb[i+1] += comb[i];
+	}
+	// for(auto u: comb) cout << u << " ";
+	sort(all(comb));
+	reverse(all(comb));
+
+	int s = 0;
+	ans = v.size();
+	while(!comb.empty() and s + comb.back() <= k) {
+		s += comb.back();
+		comb.pop_back();
+		ans --;
+	}
+	cout << ans << ln;
+	
+ 
+}
+ 
 int main() {
     IO;
-    fflush(stdout);
+	vis.assign(1e7+1, 0);
+	int i =0 ;
+	for(int i = 2;i * i <= 1e7; i++ ) {
+		if(vis[i]) continue;
+		pr.pb(i);
+		for(int j = i*i;j <= 1e7;j += i) {
+			vis[j] = 1;
+		}
+	}
+	
 	int t;cin >> t;
 	while(t--) 
-	go();
+	{
+		go2();
+	}
+ 
+	// cout << ans << ln;
 	
 	
 }
