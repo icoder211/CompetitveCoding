@@ -70,82 +70,121 @@ ll exp(ll n, ll m, ll md) {
 // }
  
  
-int n, k;
-int a[200005];
-vector<int> vis;
-set<int> s;
-vector<set<int>> v;
-vector<int> pr;
-vector<int> comb;
-set<int> same;
+ll n;
+vector<ll> vis;
+vector<ll> pr;
+ll gcd(ll c, ll d, ll &x, ll &y) {
+	if(d == 0) {
+		x = 1;
+		y = 0;
+		return c;
+	}
+	ll g = gcd(d, c%d, x, y);
+	ll x0 = y;
+	ll y0 = x - y*(c/d);
+	x=x0;
+	y=y0;
+	return g;
+}
+ll c,d,x;
 void go2() {
-	cin >> n >> k;
-	int ans = 1;
-	s.clear();
-	comb.clear();
-	// comb.pb(0);
-	v.clear();
-	forn(i, n) cin >> a[i];
-	int T = 0;
-	forn(i, n) {
-		int p = a[i];
-		int d = 0;
-		int ss = 1;
-		while(p > 1 and d < pr.size()) {
-			int cnt = 0;
-			while(p%pr[d]==0) {
-				p/=pr[d];
-				cnt++;
-			}
-			if(cnt%2 == 1) ss *= pr[d];
-			d ++;
-		}
-		if(p > 1) ss *= p;
-
-		if(s.count(ss)) {
-			v.pb(s);
-			s.clear();
-			comb.pb(0);
-			ans ++;
-		}
-		// else {
-		// 	if(!v.empty()) {
-		// 		if(v.back().count(ss)) comb.back()++;
-		// 	}
-		// }
-		if(v.empty()) {
-			same.insert(ss);
-		}else {
-			if(same.count(ss)) {
-				comb.back()++;
-				same.erase(ss);
-			}else {
-				same.insert(ss);
-			}
-		}
-		s.insert(ss);
-		a[i] = ss;
-		if(i == n-1) {
-			v.pb(s);
-		}
-	}
-	forn(i, comb.size()-1) {
-		comb[i+1] += comb[i];
-	}
-	// for(auto u: comb) cout << u << " ";
-	sort(all(comb));
-	reverse(all(comb));
-
-	int s = 0;
-	ans = v.size();
-	while(!comb.empty() and s + comb.back() <= k) {
-		s += comb.back();
-		comb.pop_back();
-		ans --;
-	}
-	cout << ans << ln;
+	cin >>c>>d>>x;
+	ll p,q;
 	
- 
+	ll g = gcd(c,d,p,q);
+	
+	assert(g > 0);
+	if(x%g) {
+		cout << 0 << ln;
+		return;
+	}
+	q *= -1;
+	assert(p*c - q*d == g);
+	p *= (x/g);
+	q *= (x/g);
+	// cout << p << " " << q << " ";
+
+	ll up = 1e9;
+	p -= up*(d/g);
+	q -= up*(c/g);
+	if(p <= 0) {
+		ll up = abs(p)/(d/g);
+		p += up * (d/g);
+		q += up * (c/g);
+		if(p <= 0) {
+			p += (d/g);
+			q += c/g;
+		}
+	}
+	if(q <= 0) {
+		ll up = abs(q)/(c/g);
+		p += up * (d/g);
+		q += up * (c/g);
+		if(q <= 0) {
+			p += (d/g);
+			q += c/g;
+		}
+	}
+	while(p < q) {
+		if(c >= d) {
+			cout << "0" << ln;
+			return;
+		}
+		p += d/g;
+		q += c/g;
+	}
+	// cout << p << " " << q << ln;
+	ll ans = 0;
+	while(p >= q) {
+		ll l = max(p,q);
+		ll g0 = min(p,q);
+		if(l > 1e3) break;
+		if(l%g0) {
+			p += d/g;
+			q += c/g;
+			continue;
+		}
+		// cout << l << " " << g0 << " ";
+		int d0 = 0;
+		ll res =1;
+		if(g0 == 1) {
+			while(d0 < pr.size() and pr[d0] * pr[d0] <= l) {
+				if(l % pr[d0] == 0) {
+					while(l % pr[d0] == 0) {
+						l /= pr[d0];
+					}
+					res *= 2ll;
+				}
+				d0 ++;
+			}
+			if(l > 1) {
+				res *= 2ll;
+			}
+			
+		}
+		while(g0 > 1 and d0 < pr.size() and pr[d0]*pr[d0] <= l) {
+			while(g0%pr[d0] == 0) {
+				l/=pr[d0];
+				g0/=pr[d0];
+			}
+			if(l%pr[d0] == 0) res*=2ll;
+			d0 ++;
+		}
+		if(g0 > 1) {
+			l /= g0;
+			if(l % g0 == 0) res *= 2ll;
+		}
+		
+		// cout << res << ln;
+		ans += res;
+		p += d/g;
+		q += c/g;
+	}
+
+	cout << ans << ln;
+
+
+
 }
  
 int main() {
@@ -155,6 +194,7 @@ int main() {
 	for(int i = 2;i * i <= 1e7; i++ ) {
 		if(vis[i]) continue;
 		pr.pb(i);
+		// cout << i << " ";
 		for(int j = i*i;j <= 1e7;j += i) {
 			vis[j] = 1;
 		}
