@@ -9,7 +9,10 @@ using namespace std;
  
 typedef long double ld;
 typedef long long ll;
- 
+
+int dr[4] = {1, 0, -1, 0};
+int dc[4] = {0, -1, 0, 1};
+
 ll exp(ll n, ll m, ll md) {
 	ll res = 1;
 	while(m > 0) {
@@ -19,60 +22,6 @@ ll exp(ll n, ll m, ll md) {
 	}
 	return res;
 }
- 
-// ll n, m;
-// // ll a[200005];
-// // vector<int> cnt;
-// void go() {
-// 	cin >> n >> m;
-// 	if(n&1) {
-// 		cout << n/2 << " " << n/2 << " " << 1 << ln;
-// 		return;
-// 	}
-// 	if(n%3 == 0) {
-// 		cout << n/3 << " " << n/3 << " " << n/3 << ln;
-// 		return;
-// 	}
-// 	if(n%4 > 0) cout << n/2-1 << " " << n/2-1 << " " << 2 << ln;
-// 	else cout << n/4 << " " << n/4 << " " << n/2 << ln;
- 
-	
-// }
- 
-// void go1() {
-// 	cin >> n >> m;
-// 	if(m >= n/2 + 1) {
-// 		forn(i,m-1) cout << 1 << " ";
-// 		cout << n - m + 1 << ln;
-// 		return;
-// 	}
-// 	if( m <= 30 && n % (1ll << (ll)(m-1)) == 0) {
-// 		cout << n / (1ll << (m-1)) << " ";
-// 		while(m > 1) {
-// 			cout << n / (1ll << (m-1)) << " ";
-// 			m --;
-// 		}
-// 		cout << ln;
-// 		return;
-// 	}
-	
-// 	forn(i, m-1) {
-// 		if((n-i) % (m-i) == 0) {
-// 			forn(j, m-i) {
-// 				cout << ((n-i) / (m-i)) << " ";
-// 			}
-// 			forn(j, i) cout << 1 << " ";
-// 			cout << ln;
-// 			return;
-// 		}
-// 	}
-// 	assert(2 > 3);
-// }
- 
- 
-ll n;
-vector<ll> vis;
-vector<ll> pr;
 ll gcd(ll c, ll d, ll &x, ll &y) {
 	if(d == 0) {
 		x = 1;
@@ -86,124 +35,192 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	y=y0;
 	return g;
 }
-ll c,d,x;
-void go2() {
-	cin >>c>>d>>x;
-	ll p,q;
-	
-	ll g = gcd(c,d,p,q);
-	
-	assert(g > 0);
-	if(x%g) {
-		cout << 0 << ln;
-		return;
-	}
-	q *= -1;
-	assert(p*c - q*d == g);
-	p *= (x/g);
-	q *= (x/g);
-	// cout << p << " " << q << " ";
 
-	ll up = 1e9;
-	p -= up*(d/g);
-	q -= up*(c/g);
-	if(p <= 0) {
-		ll up = abs(p)/(d/g);
-		p += up * (d/g);
-		q += up * (c/g);
-		if(p <= 0) {
-			p += (d/g);
-			q += c/g;
+ 
+ 
+ll n, m;
+// vector<ll> vis;
+// vector<ll> pr;
+ll a[500][500];
+ll b[500][500];
+set<ll> r[500];
+set<ll> c[500];
+ll ri[500];
+ll ci[500];
+void go() {
+	cin >> n;
+	
+	forn(i,n) {
+		ri[i] = 0;
+		ci[i] = 0;
+		r[i] = {};
+		c[i] = {};
+		forn(j,n) {
+			cin >> a[i][j];
+			if(a[i][j] == -1) {
+				r[i].insert(j);
+				c[j].insert(i);
+			}
 		}
 	}
-	if(q <= 0) {
-		ll up = abs(q)/(c/g);
-		p += up * (d/g);
-		q += up * (c/g);
-		if(q <= 0) {
-			p += (d/g);
-			q += c/g;
-		}
-	}
-	while(p < q) {
-		if(c >= d) {
-			cout << "0" << ln;
-			return;
-		}
-		p += d/g;
-		q += c/g;
-	}
-	// cout << p << " " << q << ln;
 	ll ans = 0;
-	while(p >= q) {
-		ll l = max(p,q);
-		ll g0 = min(p,q);
-		if(l > 1e3) break;
-		if(l%g0) {
-			p += d/g;
-			q += c/g;
-			continue;
+	forn(i, n) {
+		forn(j, n) {
+			cin >> b[i][j];
 		}
-		// cout << l << " " << g0 << " ";
-		int d0 = 0;
-		ll res =1;
-		if(g0 == 1) {
-			while(d0 < pr.size() and pr[d0] * pr[d0] <= l) {
-				if(l % pr[d0] == 0) {
-					while(l % pr[d0] == 0) {
-						l /= pr[d0];
-					}
-					res *= 2ll;
-				}
-				d0 ++;
-			}
-			if(l > 1) {
-				res *= 2ll;
-			}
-			
-		}
-		while(g0 > 1 and d0 < pr.size() and pr[d0]*pr[d0] <= l) {
-			while(g0%pr[d0] == 0) {
-				l/=pr[d0];
-				g0/=pr[d0];
-			}
-			if(l%pr[d0] == 0) res*=2ll;
-			d0 ++;
-		}
-		if(g0 > 1) {
-			l /= g0;
-			if(l % g0 == 0) res *= 2ll;
-		}
-		
-		// cout << res << ln;
-		ans += res;
-		p += d/g;
-		q += c/g;
 	}
+	int dummy;
+	forn(i,2*n) cin >> dummy;
 
-	cout << ans << ln;
-
-
+	ll res = 0;
+	while(true) {
+		bool isbreak = true;
+		forn(i,n) {
+			if(r[i].size() == 1) {
+				c[*r[i].begin()].erase(i);
+				r[i].clear();
+			}
+			if(c[i].size() == 1) {
+				r[*c[i].begin()] .erase(i);
+				c[i].clear();
+			}
+		}
+		forn(i,n) {
+			if(r[i].size() > 1 or c[i].size() > 1) {
+				isbreak = false;
+				break;
+			}
+		}
+		if(isbreak) break;
+		ll mnr = 1e16;
+		int ir = -1, ic = -1;
+		forn(i,n) {
+			if( mnr > b[i][*r[i].begin()] ) {
+				ir = i;
+				ic = *r[i].begin();
+				mnr = b[i][*r[i].begin()];
+			}
+			if(mnr > b[*c[i].begin()][i] ) {
+				ir = *c[i].begin();
+				ic = i;
+				mnr = b[*c[i].begin()][i];
+			}
+		}
+		r[ir].erase(ic);
+		c[ic].erase(ir);
+		res += mnr;
+	}
+	cout << res << ln;
 
 }
- 
-int main() {
-    IO;
-	vis.assign(1e7+1, 0);
-	int i =0 ;
-	for(int i = 2;i * i <= 1e7; i++ ) {
-		if(vis[i]) continue;
-		pr.pb(i);
-		// cout << i << " ";
-		for(int j = i*i;j <= 1e7;j += i) {
-			vis[j] = 1;
+
+set<ll> rr[500];
+set<ll> cc[500];
+vector<ll> v;
+ll chk(ll i) {
+	ll res = 0ll;
+	ll j = 0;
+	forn(i,n) {
+		rr[i].clear();
+		cc[i].clear();
+	}
+	while(j < v.size()) {
+		if((i >> j) & 1) {
+			res += b[v[j]/n][v[j]%n];
+			// cout <<1;
+		}else {
+			rr[v[j]/n].insert(v[j]%n);
+			cc[v[j]%n].insert(v[j]/n);
+			// cout << 0;
+		}
+		j ++;
+	}
+	bool ok = true;
+	while (true) {
+		bool isb = true;
+		ok = true;
+		forn(i,n) {
+			if(rr[i].size() == 1) {
+				if( cc[*rr[i].begin()].count(i) == 0) {
+					assert(2>3);
+				}
+				cc[*rr[i].begin()].erase(i);
+				rr[i].clear();
+				isb = false;
+				break;
+			}
+			if(cc[i].size() == 1) {
+				if(rr[*cc[i].begin()].count(i) == 0) {
+					assert(2>3);
+				}
+				rr[*cc[i].begin()].erase(i);
+				cc[i].clear();
+				isb = false;
+				break;
+			}
+			if(rr[i].size() > 1 or cc[i].size() > 1) ok = false;
+		}
+		if(isb) {
+			break;
 		}
 	}
+	forn(i,n) {
+		rr[i].clear();
+		cc[i].clear();
+	}
+	
+	if(ok) return res;
+	else return 1e16;
+}
+void go1() {
+	cin >> n;
+	v.clear();
+	forn(i,n) {
+		ri[i] = 0;
+		ci[i] = 0;
+		r[i] = {};
+		c[i] = {};
+		forn(j,n) {
+			cin >> a[i][j];
+			if(a[i][j] == -1) {
+				// r[i].pb(j);
+				// c[j].pb(i);
+				v.pb(i*n+j);
+			}
+		}
+	}
+	forn(i,n) forn(j,n) cin >> b[i][j];
+	ll dum;
+	forn(i,2*n) cin >> dum;
+	ll p = 1ll << (ll)v.size();
+	ll mn = 1e16;
+	forn(i, p) {	
+		mn = min(mn, chk(i));
+	}
+	assert(mn < 1e16);
+	cout << mn << ln;
+
+}
+
+int main() {
+    IO;
+	// vis.assign(1e7+1, 0);
+	// int i =0 ;
+	// for(int i = 2;i * i <= 1e7; i++ ) {
+	// 	if(vis[i]) continue;
+	// 	pr.pb(i);
+	// 	// cout << i << " ";
+	// 	for(int j = i*i;j <= 1e7;j += i) {
+	// 		vis[j] = 1;
+	// 	}
+	// }
 	
 	int t;cin >> t;
+	int tt = t;
 	while(t--) 
 	{
-		go2();
+		cout << "Case #" << tt-t << ": ";
+		go();
 	}
  
 	// cout << ans << ln;
