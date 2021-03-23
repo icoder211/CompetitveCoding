@@ -35,172 +35,102 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	y=y0;
 	return g;
 }
+void seive() {
+	// vis.assign(1e7+1, 0);
+	// int i =0 ;
+	// for(int i = 2;i * i <= 1e7; i++ ) {
+	// 	if(vis[i]) continue;
+	// 	pr.pb(i);
+	// 	// cout << i << " ";
+	// 	for(int j = i*i;j <= 1e7;j += i) {
+	// 		vis[j] = 1;
+	// 	}
+	// }
+}
 
- 
- 
-ll n, m;
-// vector<ll> vis;
-// vector<ll> pr;
-ll a[500][500];
-ll b[500][500];
-set<ll> r[500];
-set<ll> c[500];
-ll ri[500];
-ll ci[500];
+
+int n, m;
+vector<vector<int>> v;
+vector<set<int>> vcopy;
+vector<int> ans;
+vector<int> single;
+vector<int> cnt;
 void go() {
-	cin >> n;
-	
-	forn(i,n) {
-		ri[i] = 0;
-		ci[i] = 0;
-		r[i] = {};
-		c[i] = {};
-		forn(j,n) {
-			cin >> a[i][j];
-			if(a[i][j] == -1) {
-				r[i].insert(j);
-				c[j].insert(i);
-			}
-		}
-	}
-	ll ans = 0;
-	forn(i, n) {
-		forn(j, n) {
-			cin >> b[i][j];
-		}
-	}
-	int dummy;
-	forn(i,2*n) cin >> dummy;
-
-	ll res = 0;
-	while(true) {
-		bool isbreak = true;
-		forn(i,n) {
-			if(r[i].size() == 1) {
-				c[*r[i].begin()].erase(i);
-				r[i].clear();
-			}
-			if(c[i].size() == 1) {
-				r[*c[i].begin()] .erase(i);
-				c[i].clear();
-			}
-		}
-		forn(i,n) {
-			if(r[i].size() > 1 or c[i].size() > 1) {
-				isbreak = false;
-				break;
-			}
-		}
-		if(isbreak) break;
-		ll mnr = 1e16;
-		int ir = -1, ic = -1;
-		forn(i,n) {
-			if( mnr > b[i][*r[i].begin()] ) {
-				ir = i;
-				ic = *r[i].begin();
-				mnr = b[i][*r[i].begin()];
-			}
-			if(mnr > b[*c[i].begin()][i] ) {
-				ir = *c[i].begin();
-				ic = i;
-				mnr = b[*c[i].begin()][i];
-			}
-		}
-		r[ir].erase(ic);
-		c[ic].erase(ir);
-		res += mnr;
-	}
-	cout << res << ln;
-
-}
-
-set<ll> rr[500];
-set<ll> cc[500];
-vector<ll> v;
-ll chk(ll i) {
-	ll res = 0ll;
-	ll j = 0;
-	forn(i,n) {
-		rr[i].clear();
-		cc[i].clear();
-	}
-	while(j < v.size()) {
-		if((i >> j) & 1) {
-			res += b[v[j]/n][v[j]%n];
-			// cout <<1;
-		}else {
-			rr[v[j]/n].insert(v[j]%n);
-			cc[v[j]%n].insert(v[j]/n);
-			// cout << 0;
-		}
-		j ++;
-	}
-	bool ok = true;
-	while (true) {
-		bool isb = true;
-		ok = true;
-		forn(i,n) {
-			if(rr[i].size() == 1) {
-				if( cc[*rr[i].begin()].count(i) == 0) {
-					assert(2>3);
-				}
-				cc[*rr[i].begin()].erase(i);
-				rr[i].clear();
-				isb = false;
-				break;
-			}
-			if(cc[i].size() == 1) {
-				if(rr[*cc[i].begin()].count(i) == 0) {
-					assert(2>3);
-				}
-				rr[*cc[i].begin()].erase(i);
-				cc[i].clear();
-				isb = false;
-				break;
-			}
-			if(rr[i].size() > 1 or cc[i].size() > 1) ok = false;
-		}
-		if(isb) {
-			break;
-		}
-	}
-	forn(i,n) {
-		rr[i].clear();
-		cc[i].clear();
-	}
-	
-	if(ok) return res;
-	else return 1e16;
-}
-void go1() {
-	cin >> n;
+	cin >> n >> m;
 	v.clear();
+	vcopy.clear();
+	ans.assign(m,-1);
+	single.assign(n, 0);
+	cnt.assign(n, 0);
+	forn(i,m) {
+		int tk;cin>>tk;
+		vector<int> iN;iN.assign(tk,0);
+		set<int> in;
+		forn(j,tk) {
+			cin >> iN[j];
+			iN[j]--;
+			cnt[iN[j]] ++;
+			in.insert(iN[j]);
+		}
+		v.pb(iN);
+		vcopy.pb(in);
+		if(iN.size() == 1) {
+			single[iN.back()] ++;
+		}
+	}
+	bool more=false;
+	int ind=-1;
 	forn(i,n) {
-		ri[i] = 0;
-		ci[i] = 0;
-		r[i] = {};
-		c[i] = {};
-		forn(j,n) {
-			cin >> a[i][j];
-			if(a[i][j] == -1) {
-				// r[i].pb(j);
-				// c[j].pb(i);
-				v.pb(i*n+j);
+		if(cnt[i] > (m+1)/2) {
+			more=true;
+			if(single[i] <= (m+1)/2) {
+				ind = i;
 			}
 		}
 	}
-	forn(i,n) forn(j,n) cin >> b[i][j];
-	ll dum;
-	forn(i,2*n) cin >> dum;
-	ll p = 1ll << (ll)v.size();
-	ll mn = 1e16;
-	forn(i, p) {	
-		mn = min(mn, chk(i));
+	if(!more) {
+		cout << "YES\n";
+		forn(i,m) {
+			cout << v[i].back()+1 << " ";
+		}
+		cout << ln;
+		return;
 	}
-	assert(mn < 1e16);
-	cout << mn << ln;
-
+	if(ind < 0) {
+		cout << "NO\n";
+		return;
+	}
+	int p = 0;
+	forn(i,m) {
+		if(v[i].size() == 1 and v[i].back() == ind) {
+			ans[i] = ind;
+			p ++;
+		}
+	}
+	// cout << ind << " " << p << ln;
+	assert(p <= (m+1)/2);
+	int i = 0;
+	while(p < (m+1)/2 and i < m) {
+		if(ans[i] < 0 and vcopy[i].count(ind)) {
+			assert(v[i].size() > 1);
+			ans[i] = ind;
+			p ++;
+		}
+		i ++;
+	}
+	// cout << p << ln;
+	forn(i,m) {
+		if(ans[i] < 0) {
+			// assert(v[i].size() > 1);
+			ans[i] = v[i][0];
+			if(ans[i] == ind) ans[i] = v[i][1];
+		}
+	}
+	cout << "YES\n";
+	forn(i,m) cout << ans[i] +1<< " ";
+	cout << ln;
 }
+
 
 int main() {
     IO;
@@ -219,7 +149,7 @@ int main() {
 	int tt = t;
 	while(t--) 
 	{
-		cout << "Case #" << tt-t << ": ";
+		// cout << "Case #" << tt-t << ": ";
 		go();
 	}
  
