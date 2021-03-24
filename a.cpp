@@ -49,85 +49,38 @@ void seive() {
 }
 
 
-int n, m;
-vector<vector<int>> v;
-vector<set<int>> vcopy;
-vector<int> ans;
-vector<int> single;
-vector<int> cnt;
+int n;
+ll a[100000];
 void go() {
-	cin >> n >> m;
-	v.clear();
-	vcopy.clear();
-	ans.assign(m,-1);
-	single.assign(n, 0);
-	cnt.assign(n, 0);
-	forn(i,m) {
-		int tk;cin>>tk;
-		vector<int> iN;iN.assign(tk,0);
-		set<int> in;
-		forn(j,tk) {
-			cin >> iN[j];
-			iN[j]--;
-			cnt[iN[j]] ++;
-			in.insert(iN[j]);
-		}
-		v.pb(iN);
-		vcopy.pb(in);
-		if(iN.size() == 1) {
-			single[iN.back()] ++;
-		}
-	}
-	bool more=false;
-	int ind=-1;
-	forn(i,n) {
-		if(cnt[i] > (m+1)/2) {
-			more=true;
-			if(single[i] <= (m+1)/2) {
-				ind = i;
+	cin >> n;
+	forn(i,n) cin>>a[i];
+	vector<int> m(n, 0);
+	forn(i,n) m[i] = i+1;
+	m[n-1]=0;
+	vector<int> ans;
+	set<int> trav;
+	forn(i,n)trav.insert(i);
+	while(trav.size()>0) {
+		int i = 0;
+		set<int>neutrav,remtrav;
+		for(auto i: trav) {
+			if(remtrav.count(i)) continue;
+			if(__gcd(a[i],a[m[i]])==1){
+				remtrav.insert(m[i]);
+				ans.pb(m[i]+1);
+				m[i]= m[m[i]];
+			}
+			if(__gcd(a[i],a[m[i]])==1){
+				neutrav.insert(i);
 			}
 		}
+		for(auto u: remtrav) neutrav.erase(u);
+		trav = neutrav;
 	}
-	if(!more) {
-		cout << "YES\n";
-		forn(i,m) {
-			cout << v[i].back()+1 << " ";
-		}
-		cout << ln;
-		return;
+	cout << ans.size()<<" ";
+	for(auto u: ans) {
+		cout <<u<< " ";
 	}
-	if(ind < 0) {
-		cout << "NO\n";
-		return;
-	}
-	int p = 0;
-	forn(i,m) {
-		if(v[i].size() == 1 and v[i].back() == ind) {
-			ans[i] = ind;
-			p ++;
-		}
-	}
-	// cout << ind << " " << p << ln;
-	assert(p <= (m+1)/2);
-	int i = 0;
-	while(p < (m+1)/2 and i < m) {
-		if(ans[i] < 0 and vcopy[i].count(ind)) {
-			assert(v[i].size() > 1);
-			ans[i] = ind;
-			p ++;
-		}
-		i ++;
-	}
-	// cout << p << ln;
-	forn(i,m) {
-		if(ans[i] < 0) {
-			// assert(v[i].size() > 1);
-			ans[i] = v[i][0];
-			if(ans[i] == ind) ans[i] = v[i][1];
-		}
-	}
-	cout << "YES\n";
-	forn(i,m) cout << ans[i] +1<< " ";
 	cout << ln;
 }
 
