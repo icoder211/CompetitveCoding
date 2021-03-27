@@ -57,11 +57,59 @@ void seive() {
 
 int t, n, q;
 vector<int> a;
+int query(int w,int e, int r) {
+    cout << w << " " << e << " " << r << endl;
+	int d;cin>>d;
+	// assert(d != -1);
+	if(d == -1) exit(0);
+	return d;
+}
+void srt(int l, int r) {
+	// assert(l <= r);
+	if(r-l <= 1) return;
+    if(l > 0) {
+        int d = query(a[l], a[l+1], a[0]);
+		if(d == a[l+1]) swap(a[l], a[l+1]);
+		assert(d != a[0]);
+    } else if(r < n) {
+		int d = query(a[l], a[l+1], a[n-1]);
+		assert(d != a[n-1]);
+		if(d == a[l]) swap(a[l], a[l+1]);
+	}
+	int w = l, e = l+1;
+	forsn(p, l+2, r) {
+		int d = query(a[w], a[e], a[p]);
+		if(d == a[w]) {
+			int temp = a[p];
+			for(int it = p; it > w;it--) a[it] = a[it-1];
+			a[w] = temp;
+			w++;
+			e++;
+		} else if(d == a[p]) {
+			int temp = a[p];
+			for(int it = p;it > e;it--) a[it] = a[it-1];
+			a[e] = temp;
+			e++;
+		}
+		// assert(w<e and e<r and w>=l);
+	}
+	srt(l, w);
+	srt(w+1, e);
+	srt(e, r);
+
+
+}
 void go() {
     a.assign(n, 1);
     forn(i,n) a[i] = i+1;
-    
+	srt(0, n);
+	forn(i, n) cout << a[i] << " ";
+	cout << endl;
+	int d;cin >> d;
+	if(d == -1) exit(0);
 }
+
+
 int main() {
     IO;
     cin >> t >> n >> q;
