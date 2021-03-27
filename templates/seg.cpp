@@ -10,6 +10,30 @@ using namespace std;
 typedef long double ld;
 typedef long long ll;
 
+void build() {
+	for(int i= n-1;i > 0;i--) t[i] = max(t[i<<1], t[i<<1|1]);
+}
+ll query(int l, int r) {
+	if(l >= r) return -1;
+	l += n;
+	r += n;
+	ll res = -1e9-1;
+	while(l < r) {
+		if(l&1) res= max(res, t[l++]);
+		if(r&1) res= max(res, t[--r]);
+		l/=2;r/=2;
+	}
+	return res;
+}
+void modify(int l, ll val) {
+	l += n;
+	t[l] = val;l/=2;
+	while(l > 0) {
+		t[l] =max(t[l<<1], t[l<<1|1]);
+		l/= 2;
+	}
+}
+
 const int N = 300005;
 int n;
 int h;

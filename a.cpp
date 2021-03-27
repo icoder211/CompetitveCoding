@@ -1,3 +1,7 @@
+/**
+ * Author: icoder211
+ */
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ln "\n"
@@ -35,78 +39,370 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	y=y0;
 	return g;
 }
+vector<int> pr;
 void seive() {
-	// vis.assign(1e7+1, 0);
-	// int i =0 ;
-	// for(int i = 2;i * i <= 1e7; i++ ) {
-	// 	if(vis[i]) continue;
-	// 	pr.pb(i);
-	// 	// cout << i << " ";
-	// 	for(int j = i*i;j <= 1e7;j += i) {
-	// 		vis[j] = 1;
-	// 	}
-	// }
+	vector<int> vis;
+	pr.clear();
+	vis.assign(1e7+1, 0);
+	int i =0 ;
+	for(int i = 2;i * i <= 1e7; i++ ) {
+		if(vis[i]) continue;
+		pr.pb(i);
+		// cout << i << " ";
+		for(int j = i*i;j <= 1e7;j += i) {
+			vis[j] = 1;
+		}
+	}
 }
 
+int t,n,q;
+vector<set<int>> ad;
+vector<int> vis;
+vector<int> ans;
+set<int> st;
+void dfs(ll s) {
+	if(vis[s]) return;
+	vis[s] = 1;
+	for (auto u: ad[s]) {
+		if(vis[u]) continue;
+		dfs(u); 
+	}
+	ans.pb(s);
+}
 
-int n;
-ll a[100000];
-void go() {
-	cin >> n;
-	forn(i,n) cin>>a[i];
-	vector<int> m(n, 0);
-	forn(i,n) m[i] = i+1;
-	m[n-1]=0;
-	vector<int> ans;
-	set<int> trav;
-	forn(i,n)trav.insert(i);
-	while(trav.size()>0) {
-		int i = 0;
-		set<int>neutrav,remtrav;
-		for(auto i: trav) {
-			if(remtrav.count(i)) continue;
-			if(__gcd(a[i],a[m[i]])==1){
-				remtrav.insert(m[i]);
-				ans.pb(m[i]+1);
-				m[i]= m[m[i]];
-			}
-			if(__gcd(a[i],a[m[i]])==1){
-				neutrav.insert(i);
+// void go(int n_, int q_) {
+// 	// cout << "haha\n";
+// 	n = n_;
+// 	q = q_;
+	
+// 	if(n>10) return;
+// 	forn(i,n) {
+// 		st.insert(i);
+// 	}
+// 	ans.clear();
+// 	st.clear();
+// 	vis.assign(n, 0);
+// 	ad.assign(n,{});
+// 	forn(i,n) forsn(j,i+1,n) forsn(k,j+1,n) {
+// 		// cout << ln;
+
+// 		// forn(p,n) {
+// 		// 	cout << p +1<< " ";
+// 		// 	for(auto u: ad[p]) cout << u +1<< " ";
+// 		// 	cout << ln;
+// 		// }
+// 		cout << i+1 << " " << j+1 << " " << k+1 << endl;
+// 		ll d;cin >> d;if(d==-1)exit(0);d--;
+		
+// 		ll a[3] = {i,j,k};
+// 		forn(p,3) {
+// 			if(d != a[p]) continue;
+// 			assert(!ad[a[p]].count(a[(p+1)%3]) or ad[a[(p-1)%3]].count(a[p]) or ad[a[(p-1)%3]].count(a[(p+1)%3]) ||
+// 			       !ad[a[p]].count(a[(p-1)%3]) or ad[a[(p+1)%3]].count(a[p]) or ad[a[(p+1)%3]].count(a[(p-1)%3]) );
+// 			// cout << a[p]+1 << " " << a[(p+1)%3]+1 << endl;
+// 			if( ad[a[p]].count(a[(p+1)%3]) or ad[a[(p-1)%3]].count(a[p]) or ad[a[(p-1)%3]].count(a[(p+1)%3]) ) {
+// 				ad[a[p]].insert(a[(p+1)%3]); //assert(!ad[a[(p+1)%3]].count(a[p]));
+// 				ad[a[(p-1)%3]].insert(a[p]); //assert(!ad[a[p]].count(a[(p-1)%3]));
+// 				ad[a[(p-1)%3]].insert(a[(p+1)%3]); //assert(!ad[a[(p+1)%3]].count(a[(p-1)%3]));
+
+// 				st.erase(a[p]);
+// 				st.erase(a[(p+1)%3]);
+// 			} else {
+// 				ad[a[p]].insert(a[(p-1)%3]); //assert(!ad[a[(p-1)%3]].count(a[p]));
+// 				ad[a[(p+1)%3]].insert(a[p]);// assert(!ad[a[p]].count(a[(p+1)%3]));
+// 				ad[a[(p+1)%3]].insert(a[(p-1)%3]); //assert(!ad[a[(p-1)%3]].count(a[(p+1)%3]));
+
+// 				st.erase(a[p]);
+// 				st.erase(a[(p-1)%3]);
+// 			}
+// 		}
+// 	}
+// 	// cout << n;
+
+// 	forn(i,n) {
+// 		if(!vis[i]) dfs(i);
+// 	}
+// 	assert(ans.size()==n);
+// 	forn(i,ans.size()) cout << ans[i]+1 << " ";
+// 	cout << endl;
+// 	int d;cin>>d;
+// 	if(d==-1) exit(0);
+// }
+
+vector<int> test;
+vector<int> a;
+int qcount = 0;
+int query(int a1, int b, int c) {
+	qcount ++;
+
+	int res = a1+b+c;
+	int i = 0;
+	set<int> st;
+	st.insert(a1);st.insert(b);st.insert(c);
+	while(i < test.size()) {
+		if(st.count(test[i])) {
+			res -= test[i];
+			break;
+		}
+		i++;
+	}
+	i = test.size()-1;
+	while(i>=0) {
+		if(st.count(test[i])) {
+			res -= test[i];
+			break;
+		}
+		i--;
+	}
+	return res;
+
+
+	cout << a1 << " " << b << " " << c << endl;
+	int d; cin >> d; if(d==-1) exit(0);
+	return d;
+}
+int pos;
+
+void qsort(int l, int r) {
+	assert(l >= 0 and r <= n);
+	if(l >= r-1) return;
+	set<int> s1,s2,s3;
+	// if(l > 0) {
+	// 	// cout << "swap left\n";
+	// 	// cout << l << " " << r << ln;
+	// 	// cout << a[l] << " " << a[l+1] << " " << a[0] << ln;
+	// 	int d = query(a[0],a[l],a[l+1]);
+	// 	assert(d != a[0]);
+	// 	if(d == a[l+1]) swap(a[l],a[l+1]);
+	// } else if (r < n) {
+	// 	// cout << "swap right\n";
+	// 	// cout << l << " " << r << ln;
+	// 	// cout << a[l] << " " << a[l+1] << " " << a[n-1] << ln;
+	// 	int d = query(a[n-1],a[l],a[l+1]);
+	// 	assert(d != a[n-1]);
+	// 	if(d == a[l]) swap(a[l],a[l+1]);
+	// }
+	int d = query(a[l], a[l+1], a[pos]);
+	assert(d != a[pos]);
+	assert(a[pos] == 1);
+	if(l < pos) {
+		if(d == a[l]) swap(a[l], a[l+1]);
+	}else {
+		if(d == a[l+1]) swap(a[l], a[l+1]);
+	}
+	forsn(i,l+2,r) {
+		int d = query(a[i],a[l],a[l+1]);
+		if(d == a[i])s2.insert(a[i]);
+		if(d == a[l]) s1.insert(a[i]);
+		if(d == a[l+1]) s3.insert(a[i]);
+	}
+	vector<int> temp;
+	for(auto u: s1) temp.pb(u);
+	temp.pb(a[l]);
+	for(auto u: s2) temp.pb(u);
+	temp.pb(a[l+1]);
+	for(auto u: s3) temp.pb(u);
+
+	// cout << a[l] << " " << a[l+1] << ln;
+	// cout << "s1"<< " ";
+	// for(auto u: s1) cout << u << " ";
+	// cout<<ln;
+	// cout << "s2"<< " ";
+	// for(auto u: s2) cout << u << " ";
+	// cout<<ln;
+	// cout << "s3"<< " ";
+	// for(auto u: s3) cout << u << " ";
+	// cout<<ln;
+	assert(temp.size() == r-l);
+	forsn(p, l, r) a[p] = temp[p-l];
+	assert(s3.size()+s2.size()+s1.size()+l+1+1 == r);
+
+	if(s1.size()>0) qsort(l,s1.size()+l);
+	if(s2.size()>0) qsort(s1.size()+l+1,s2.size()+s1.size()+l+1);
+	if(s3.size()>0) qsort(s2.size()+s1.size()+l+1+1,s3.size()+s2.size()+s1.size()+l+1+1);
+}
+void go1(int n_, int q_) {
+	n=n_;q=q_;
+	
+	a.clear();
+	forn(i,n) a.pb(i+1);
+	set<int> st;
+	forn(i,n-2) {
+		int d = query(1,2,i+3);
+		if(d == 1) st.insert(i+3);
+	}
+	vector<int> temp;
+	forsn(i,1,n) {
+		if(st.count(i+1)){}
+		else temp.pb(i+1);
+	}
+	pos = temp.size();
+	temp.pb(1);
+	forsn(i,1,n) {
+		if(st.count(i+1)) temp.pb(i+1);
+	}
+	forn(i,n) a[i] = temp[i];
+
+	qsort(0, pos);
+	qsort(pos+1, n);
+
+	// qsort(0,n);
+
+	forn(i,n) cout << test[i] << " ";
+	cout << ln;
+	forn(i,n) cout << a[i] << " ";
+	cout << ln;
+	bool ok = true;
+	forn(i,n) {
+		ok &= (test[i] == a[i]);
+	}
+	bool okk = true;
+	forn(i,n) {
+		okk &= (test[i] == a[n-1-i]);
+	}
+	cout << (okk || ok )<< ln;
+	assert(okk || ok);
+}
+
+void go2() {
+	int x,y,n;
+	string s;
+	cin >> x >> y >> s;
+	n = s.size();
+	int i = 0;
+	while(i < n and s[i] == '?') i++;
+	if(i == n) {
+		int ans = 0;
+		if(x>0 and y>0) {
+			ans = 0;
+		} else {
+			if(x+y <= 0) {
+				ans += ((x+y)* (n/2 - 1)) + min(min(0,y),x);
+			}else {
+				ans = 0;
 			}
 		}
-		for(auto u: remtrav) neutrav.erase(u);
-		trav = neutrav;
+		cout << ans << ln;
+		return;
 	}
-	cout << ans.size()<<" ";
-	for(auto u: ans) {
-		cout <<u<< " ";
+	int ans = 0;
+	if(i>0) {
+		if(x>0 and y>0) {
+			ans = 0;
+		} else {
+			if(s[i] == 'J') {
+				int p = (i+1)/2 * x + i/2 * y;
+				int q = (i)/2 * x + i/2 * y;
+				int add = min(0, p);
+				add = min(add, q);
+				add = min(add, x);
+				ans += add;
+			}else {
+				swap(x,y);
+				int p = (i+1)/2 * x + i/2 * y;
+				int q = (i)/2 * x + i/2 * y;
+				int add = min(0, p);
+				add = min(add, q);
+				add = min(add, x);
+				ans += add;
+				swap(x,y);
+			}
+		}
 	}
-	cout << ln;
+	// cout << ans << " " ;
+	while(i < n) {
+		int j = i+1;
+		while(j < n and s[j] == '?') j++;
+		
+		if(j == n) {
+			// <almostcopypastedpart>
+			if(x>0 and y>0) {
+				ans += 0;
+			} else {
+				int temp = i;
+				i = n-1-i;
+				if(s[temp] == 'C') {
+					int p = (i+1)/2 * x + i/2 * y;
+					int q = (i)/2 * x + i/2 * y;
+					int add = min(0, p);
+					add = min(add, q);
+					add = min(add, x);
+					ans += add;
+				}else {
+					swap(x,y);
+					int p = (i+1)/2 * x + i/2 * y;
+					int q = (i)/2 * x + i/2 * y;
+					int add = min(0, p);
+					add = min(add, q);
+					add = min(add, x);
+					ans += add;
+					swap(x,y);
+				}
+			}
+			break;
+			// </almostcopypastedpart>
+		}
+		if(j == i+1) {
+			if(s[i] != s[j]) {
+				if(s[i] == 'C') ans += x;
+				else ans += y;
+			}
+			i = j;
+			continue;
+		}
+		if(s[j] == s[i]) {
+			if(s[i] == 'J'){
+				swap(x,y);
+			}
+			//code
+			int add = 0;
+			int m = j-i-1;
+			add = min(add, (x+y)*(m+1)/2) ;
+			ans += add;
+			if(s[i] == 'J'){
+				swap(x,y);
+			}
+		}else {
+			if(s[i] == 'J'){
+				swap(x,y);
+			}
+			//code
+			int add = x;
+			int m = (j-i-1);
+			add = min(add, (x+y)* (m+1)/2 - y);
+			ans += add;
+			if(s[i] == 'J') {
+				swap(x,y);
+			}
+		}
+		// cout << i << " " << j << " " << ans << ln;
+		i = j;
+
+	}
+	cout << ans << ln;
 }
 
 
 int main() {
     IO;
-	// vis.assign(1e7+1, 0);
-	// int i =0 ;
-	// for(int i = 2;i * i <= 1e7; i++ ) {
-	// 	if(vis[i]) continue;
-	// 	pr.pb(i);
-	// 	// cout << i << " ";
-	// 	for(int j = i*i;j <= 1e7;j += i) {
-	// 		vis[j] = 1;
-	// 	}
-	// }
-	
-	int t;cin >> t;
+	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+	int t,n,q; t=1;
+	qcount = 0;
+	// cin >> t;
+	t=30000;n=50;q=170*t;
+	// cin>> t>> n>> q;
 	int tt = t;
-	while(t--) 
-	{
+	test.assign(n, 0);
+	forn(i,n) test[i] = i+1;
+	while(t--) {
+		shuffle(all(test), rng);
+		// test = {2,1,5,4,3};
 		// cout << "Case #" << tt-t << ": ";
-		go();
+		go1(n,q);
 	}
- 
-	// cout << ans << ln;
-	
-	
+	cout << "qcount " << qcount << ln;
+	// assert(qcount <= q);
+	if(qcount <= q) cout << "YES\n";
+	else cout << "NO\n";
+
 }
