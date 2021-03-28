@@ -96,8 +96,6 @@ void srt(int l, int r) {
 	srt(l, w);
 	srt(w+1, e);
 	srt(e, r);
-
-
 }
 void go() {
     a.assign(n, 1);
