@@ -55,61 +55,72 @@ void seive() {
 	}
 }
 
-int t, n, q;
-vector<int> a;
-int query(int w,int e, int r) {
-    cout << w << " " << e << " " << r << endl;
-	int d;cin>>d;
-	// assert(d != -1);
-	if(d == -1) exit(0);
-	return d;
-}
-void srt(int l, int r) {
-	// assert(l <= r);
-	if(r-l <= 1) return;
-    if(l > 0) {
-        int d = query(a[l], a[l+1], a[0]);
-		if(d == a[l+1]) swap(a[l], a[l+1]);
-		assert(d != a[0]);
-    } else if(r < n) {
-		int d = query(a[l], a[l+1], a[n-1]);
-		assert(d != a[n-1]);
-		if(d == a[l]) swap(a[l], a[l+1]);
-	}
-	int w = l, e = l+1;
-	forsn(p, l+2, r) {
-		int d = query(a[w], a[e], a[p]);
-		if(d == a[w]) {
-			int temp = a[p];
-			for(int it = p; it > w;it--) a[it] = a[it-1];
-			a[w] = temp;
-			w++;
-			e++;
-		} else if(d == a[p]) {
-			int temp = a[p];
-			for(int it = p;it > e;it--) a[it] = a[it-1];
-			a[e] = temp;
-			e++;
-		}
-		// assert(w<e and e<r and w>=l);
-	}
-	srt(l, w);
-	srt(w+1, e);
-	srt(e, r);
-}
+ll n, m;
+ll md = 1e9 + 7;
+// ll a[1000][1000];
+vector<int> ans;
 void go() {
-    a.assign(n, 1);
-    forn(i,n) a[i] = i+1;
-	srt(0, n);
-	forn(i, n) cout << a[i] << " ";
-	cout << endl;
-	int d;cin >> d;
-	if(d == -1) exit(0);
+	cin >> n >> m;
+	ans.assign(m+1, -1);
+	ans[0] = 0;
+	forn(itt,n) {
+		// cout << "ha ";
+		ld tk, xi, yi;
+		cin >> tk >> xi >> yi;
+		if(tk == 1) {
+			ll x = xi;
+			x = floor((x + 99999)/100000);
+			assert(x > 0);
+			vector<int> vis;
+			vis.assign(m+1, 0);
+			int i = 0;
+			for(; i <= m; i++) {
+		        // cout << i << " ";
+
+				if(vis[i]) continue;
+				if(ans[i] < 0) continue;
+				int p = i;
+				for (int j = p; j <= m && ((j-p) / x) <= yi; j += x) {
+					vis[j] = 1;
+					if(ans[j] < 0) ans[j] = itt+1;
+					else {
+						p = j;
+					}
+				}
+			}
+		}else {
+		// cout << "hahaha ";
+
+			xi = (xi / (long double)100000);
+			vector<int> vis;
+			vis.assign(m+1, 0);
+			int i = 1;
+			for (; i <= m; i++) {
+				// cout << i << " " ;
+				if(vis[i]) continue; vis[i] = 1;
+				if(ans[i] < 0) continue;
+				int p = i;
+				int times = 0;
+				for(int j = p;j <= m && j > 0 && times <= yi; j = ceil((long double)j * xi)) {
+					// cout << j << " ";
+					if(ans[j] < 0) {
+						ans[j] = itt+1;
+						vis[i] = 1;
+					}
+					times ++;
+				}
+			}
+		}
+	}
+	forsn(i,1,m+1) cout << ans[i] << " ";
+	cout << ln;
 }
 
 
 int main() {
     IO;
-    cin >> t >> n >> q;
-    while(t--) go();
+	int t;t=1;
+    // cin >> t;
+    while(t--) 
+		go();
 }
