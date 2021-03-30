@@ -58,56 +58,63 @@ void seive() {
 ll n, m;
 ll md = 1e9 + 7;
 // ll a[1000][1000];
-vector<int> ans;
+vector<ll> ans;
 void go() {
 	cin >> n >> m;
 	ans.assign(m+1, -1);
 	ans[0] = 0;
 	forn(itt,n) {
-		// cout << "ha ";
 		ld tk, xi, yi;
 		cin >> tk >> xi >> yi;
 		if(tk == 1) {
 			ll x = xi;
-			x = floor((x + 99999)/100000);
+			x = ceil(xi / (ld)100000);
 			assert(x > 0);
-			vector<int> vis;
+			vector<ll> vis;
 			vis.assign(m+1, 0);
-			int i = 0;
+			ll i = 0;
 			for(; i <= m; i++) {
 		        // cout << i << " ";
 
 				if(vis[i]) continue;
 				if(ans[i] < 0) continue;
-				int p = i;
-				for (int j = p; j <= m && ((j-p) / x) <= yi; j += x) {
-					vis[j] = 1;
-					if(ans[j] < 0) ans[j] = itt+1;
+				ll p = i;
+				for (ll j = p; j <= m && ((j-p) / x) <= yi; j += x) {
+					if(ans[j] < 0) {
+						vis[j] = 1;
+
+						ans[j] = itt+1;
+					}
 					else {
+						vis[j] = 1;
 						p = j;
 					}
 				}
 			}
 		}else {
-		// cout << "hahaha ";
 
-			xi = (xi / (long double)100000);
-			vector<int> vis;
+			xi = (xi / (ld)100000);
+			vector<ll> vis;
 			vis.assign(m+1, 0);
-			int i = 1;
+			ll i = 1;
 			for (; i <= m; i++) {
 				// cout << i << " " ;
 				if(vis[i]) continue; vis[i] = 1;
 				if(ans[i] < 0) continue;
-				int p = i;
-				int times = 0;
-				for(int j = p;j <= m && j > 0 && times <= yi; j = ceil((long double)j * xi)) {
+				ll p = i;
+				ll times = 1;
+				for(ll j =  ceil((ld)p * xi);j <= m && times <= yi; j = ceil((ld)j * xi)) {
 					// cout << j << " ";
 					if(ans[j] < 0) {
 						ans[j] = itt+1;
-						vis[i] = 1;
+						vis[j] = 1;
+						times ++;
 					}
-					times ++;
+					else {
+						times = 1;
+						vis[j] = 1;
+					}
+
 				}
 			}
 		}
