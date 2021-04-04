@@ -57,29 +57,71 @@ void seive() {
 
 ll n, m;
 ll md = 1e9 + 7;
-map<ll, ll> cnt;
-map<ll, ll> ccnt;
-ll a[200000];
-void go1() {
-	cnt.clear();
-	ccnt.clear();
+ll a[101][101];
+int e1 = 0, e2 = 0;
+int o1 = 0, o2 = 0;
+void go(){
 	cin >> n;
-	forn(i,n) {
-		cin >> a[i];
-		cnt[a[i]] ++;
+	forn(i,n) forn(j,n) a[i][j] = -1;
+	if(n&1) {
+		o1 = 1;
+		o2 = 1;
+		e1 = 1;
+		e2 = 2;
+	}else {
+		o1 = 1;
+		o2 = 1;
+		e1 = 1;
+		e2 = 2;
 	}
-	for(auto u: cnt) {
-		if(u.first > 2) ccnt[2] ++;
-		ccnt[u.first] ++;
-	}
-	if(ccnt[2] >= 2 or ccnt[4] > 0) {
-		cout << "YES\n";
+	forn(i, n*n) {
+		int d;cin >> d;
+		if(d == 1) {
+			if(e1 > n) {
+				cout << 3 << " " << o1 << " " << o2 << endl;
+				o2 += 2;
+				if(o2 > n) {
+					o2 -= n;
+					o1 ++;
+					if(n%2 == 0) o2 = 3-o2;
+				}
+				continue;
+			}
+			cout << 2 << " " << e1 << " " << e2 << endl;
+			e2 += 2;
+			if(e2 > n) {
+				e2 -= n;
+				e1 ++;
+				if(n%2 == 0) e2 = 3 - e2;
+			}
+
+		} else {
+			if(o1 > n) {
+				cout << 5-d << " " << e1 << " " << e2 << endl;
+				e2 += 2;
+				if(e2 > n) {
+					e2 -= n;
+					e1 ++;
+					if(n%2 == 0) e2 = 3-e2;
+				}
+				continue;
+			}
+			cout << 1 << " " << o1 << " " << o2 << endl;
+			o2 += 2;
+			if(o2 > n) {
+				o2 -= n;
+				o1 ++;
+				if(n%2 == 0) o2 = 3-o2;
+			}
+		}
 	}
 }
 
+
 int main() {
     IO;
-	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+	cout.flush();
+	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t;t=1;
     // cin >> t;
     while(t--) 
