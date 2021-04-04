@@ -55,74 +55,73 @@ void seive() {
 	}
 }
 
-ll n, m;
+int n, d;
 ll md = 1e9 + 7;
-ll a[101][101];
-int e1 = 0, e2 = 0;
-int o1 = 0, o2 = 0;
-void go(){
-	cin >> n;
-	forn(i,n) forn(j,n) a[i][j] = -1;
-	if(n&1) {
-		o1 = 1;
-		o2 = 1;
-		e1 = 1;
-		e2 = 2;
-	}else {
-		o1 = 1;
-		o2 = 1;
-		e1 = 1;
-		e2 = 2;
+int a[1025];
+string s[1025];
+vector<int> ans;
+void go() {
+	cin >> d >> n;
+	forn(i,n) {
+		cin >> s[i];
 	}
-	forn(i, n*n) {
-		int d;cin >> d;
-		if(d == 1) {
-			if(e1 > n) {
-				cout << 3 << " " << o1 << " " << o2 << endl;
-				o2 += 2;
-				if(o2 > n) {
-					o2 -= n;
-					o1 ++;
-					if(n%2 == 0) o2 = 3-o2;
-				}
-				continue;
-			}
-			cout << 2 << " " << e1 << " " << e2 << endl;
-			e2 += 2;
-			if(e2 > n) {
-				e2 -= n;
-				e1 ++;
-				if(n%2 == 0) e2 = 3 - e2;
-			}
-
-		} else {
-			if(o1 > n) {
-				cout << 5-d << " " << e1 << " " << e2 << endl;
-				e2 += 2;
-				if(e2 > n) {
-					e2 -= n;
-					e1 ++;
-					if(n%2 == 0) e2 = 3-e2;
-				}
-				continue;
-			}
-			cout << 1 << " " << o1 << " " << o2 << endl;
-			o2 += 2;
-			if(o2 > n) {
-				o2 -= n;
-				o1 ++;
-				if(n%2 == 0) o2 = 3-o2;
+	sort(s, s+n);
+	set<int> over;
+	while(over.size() < n) {
+		int i = 0;
+		while(i < n and over.count(i)) i ++;
+		over.insert(i);
+		if(!ans.empty()) ans.pb(-1);
+		set<int> cur;
+		forn(it, d) {
+			if(s[i][it] == '1') {
+				ans.pb(it);
+				cur.insert(it);
 			}
 		}
+		while(i < n) {
+			int j = i+1;
+			while(j < n) {
+				if(over.count(j)) {
+					j++;
+					continue;
+				}
+				bool isb = true;
+				forn(it, d) {
+					if(s[i][it] == '1' and s[j][it] == '0') {
+						isb = false;
+						break;
+					}
+				}
+				if(isb) break;
+				j ++;
+			}
+			if(j == n) break;
+			over.insert(j);
+			forn(it, d) {
+				if(s[j][it] == '1') {
+					if(cur.count(it)) continue;
+					cur.insert(it);
+					ans.pb(it);
+				}
+			}
+			i = j;
+		}
 	}
+	cout << ans.size() << ln;
+	for(auto u: ans) {
+		if(u == -1) cout << "R ";
+		else cout << u << " ";
+	}
+	cout << ln;
 }
 
 
 int main() {
     IO;
-	cout.flush();
+	// cout.flush();
 	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-	int t;t=1;
+	int t; t = 1;
     // cin >> t;
     while(t--) 
 		go();
