@@ -58,62 +58,120 @@ void seive() {
 int n, d;
 ll md = 1e9 + 7;
 int a[1025];
-string s[1025];
+vector<string> s;
 vector<int> ans;
+
+bool contain(string ss, string t) {
+	forn(it, d) {
+		if(ss[it] == '1' and t[it] == '0') return false;
+	}
+	return true;
+}
+
+vector<vector<int>> ad;
+set<pair<int, int>> in;
+vector<int> indeg;
+vector<int> nxt, prv;
 void go() {
 	cin >> d >> n;
+	s.assign(n, {});
 	forn(i,n) {
 		cin >> s[i];
 	}
-	sort(s, s+n);
-	set<int> over;
-	while(over.size() < n) {
-		int i = 0;
-		while(i < n and over.count(i)) i ++;
-		over.insert(i);
-		if(!ans.empty()) ans.pb(-1);
-		set<int> cur;
-		forn(it, d) {
-			if(s[i][it] == '1') {
-				ans.pb(it);
-				cur.insert(it);
+	// sort(s, s+n);
+	ad.assign(n, {});
+	indeg.assign(n, 0);
+	nxt.assign(n, -1);
+	prv.assign(n, -1);
+
+	forn(i,n) {
+		forn(j,n) {
+			if(i==j) continue;
+			if(contain(s[i], s[j])) {
+				ad[i].pb(j);
+				indeg[j]++;
 			}
 		}
-		while(i < n) {
-			int j = i+1;
-			while(j < n) {
-				if(over.count(j)) {
-					j++;
-					continue;
+	}
+	// vector<int> end;
+	forn(i,n) {
+		// if(ad[i].size() == 0) {
+		// 	end.pb(i);
+		// }
+		in.insert({indeg[i], i});
+	}
+	int mxwidht = 0;
+	set<int> end; forn(i,n) end.insert(i);
+	while(!in.empty()) {
+		vector<int> b;
+		while(!in.empty() && in.begin()->first == 0) {
+			b.pb(in.begin()->second);
+			in.erase(in.begin());
+		}
+		mxwidht = max(mxwidht, (int)b.size());
+		forn(i, b.size()) {
+			forn(j, ad[b[i]].size()) {
+				in.erase( { indeg[ ad[b[i]][j] ],  ad[b[i]][j] }) ;
+				indeg[ ad[b[i]][j] ] --;
+				if(indeg[ ad[b[i]][j] ] == 0 && prv[ ad[b[i]][j] ] == -1) {
+					prv[ ad[b[i]][j] ] = b[i];
+					end.erase(b[i]);
 				}
-				bool isb = true;
-				forn(it, d) {
-					if(s[i][it] == '1' and s[j][it] == '0') {
-						isb = false;
-						break;
-					}
-				}
-				if(isb) break;
-				j ++;
+				in.insert( { indeg[ ad[b[i]][j] ],  ad[b[i]][j] }) ;
 			}
-			if(j == n) break;
-			over.insert(j);
+		}
+	}
+
+	// cout << "prev ";
+	// forn(i,n) {
+	// 	cout << prv[i] << " ";
+	// } cout << ln;
+
+	// cout << mxwidht << ln;
+
+	// cout << "end ";
+	// for(auto u: end) cout << u << " ";
+	// cout << ln;
+
+	vector<vector<int>> paths;
+	for(auto it: end) {
+		paths.pb({});
+		paths.back().pb(it);
+		int u = it;
+		while(prv[u] != -1) {
+			paths.back().pb(prv[u]);
+			u = prv[u];
+		}
+		reverse(all(paths.back()));
+	}
+
+	// forn(i, paths.size()) {
+		// cout << "i" << i << " ";
+	// 	forn(j, paths[i].size()) {
+	// 		cout << paths[i][j] << " ";
+	// 	}
+	// 	cout << ln;
+	// }
+	
+	forn(i, paths.size()) {
+		if(!ans.empty()) ans.pb(-1);
+		set<int> st;
+		forn(j, paths[i].size()) {
 			forn(it, d) {
-				if(s[j][it] == '1') {
-					if(cur.count(it)) continue;
-					cur.insert(it);
+				if(s [ paths[i][j] ][ it ] == '1' && !st.count(it)) {
+					st.insert(it);
 					ans.pb(it);
 				}
 			}
-			i = j;
 		}
+		st.clear();
 	}
 	cout << ans.size() << ln;
-	for(auto u: ans) {
-		if(u == -1) cout << "R ";
-		else cout << u << " ";
+	forn(it, ans.size()) {
+		if(ans[it] == -1) cout << "R ";
+		else cout << ans[it] << " ";
 	}
-	cout << ln;
+	
 }
 
 
