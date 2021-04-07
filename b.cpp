@@ -55,132 +55,85 @@ void seive() {
 	}
 }
 
-int n, d;
-ll md = 1e9 + 7;
-int a[1025];
-vector<string> s;
-vector<int> ans;
-
-bool contain(string ss, string t) {
-	forn(it, d) {
-		if(ss[it] == '1' and t[it] == '0') return false;
-	}
-	return true;
-}
-
-vector<vector<int>> ad;
-set<pair<int, int>> in;
-vector<int> indeg;
-vector<int> nxt, prv;
+int n, m;
+int a[26][26];
 void go() {
-	cin >> d >> n;
-	s.assign(n, {});
+	cin >> n >> m;
+	cout << ln;
 	forn(i,n) {
-		cin >> s[i];
+		string s;
+		cin >> s;
+		forn(j,m) {
+			a[i][j] = s[j];
+			if(a[i][j] == '?') a[i][j] = -1;
+		}
 	}
-	// sort(s, s+n);
-	ad.assign(n, {});
-	indeg.assign(n, 0);
-	nxt.assign(n, -1);
-	prv.assign(n, -1);
-
+	bool row = true;
+	forn(i,n) {
+		int j = 0;
+		while(j < m and a[i][j] == -1) {
+			j++;
+		}
+		if(j == m) {
+			row = false;
+			break;
+		}
+	}
+	// cout << "row " << row<<endl;
+	if(row) {
+		forn(i,n) {
+			int j = 0;
+			while(j < m and a[i][j] == -1) {
+				j++;
+			}
+			while(j < m) {
+				int k = j-1;
+				while(k >= 0 and a[i][k] == -1) {
+					a[i][k] = a[i][j]; k--;
+				}
+				k = j+1;
+				while(k < m and a[i][k] == -1) {
+					a[i][k] = a[i][j]; k++;
+				}
+				j = k;
+			}
+		}
+	}else {
+		forn(j,m) {
+			int i = 0;
+			while(i < n and a[i][j] == -1) {
+				i++;
+			}
+			while(i < n) {
+				int k = i-1;
+				while(k >= 0 and a[k][j] == -1) {
+					a[k][j] = a[i][j]; k--;
+				}
+				k = i+1;
+				while(k < n and a[k][j] == -1) {
+					a[k][j] = a[i][j]; k++;
+				}
+				i = k;
+			}
+		}
+	}
 	forn(i,n) {
 		forn(j,n) {
-			if(i==j) continue;
-			if(contain(s[i], s[j])) {
-				ad[i].pb(j);
-				indeg[j]++;
-			}
+			cout << (char)a[i][j];
 		}
+		cout << ln;
 	}
-	// vector<int> end;
-	forn(i,n) {
-		// if(ad[i].size() == 0) {
-		// 	end.pb(i);
-		// }
-		in.insert({indeg[i], i});
-	}
-	int mxwidht = 0;
-	set<int> end; forn(i,n) end.insert(i);
-	while(!in.empty()) {
-		vector<int> b;
-		while(!in.empty() && in.begin()->first == 0) {
-			b.pb(in.begin()->second);
-			in.erase(in.begin());
-		}
-		mxwidht = max(mxwidht, (int)b.size());
-		forn(i, b.size()) {
-			forn(j, ad[b[i]].size()) {
-				in.erase( { indeg[ ad[b[i]][j] ],  ad[b[i]][j] }) ;
-				indeg[ ad[b[i]][j] ] --;
-				if(indeg[ ad[b[i]][j] ] == 0 && prv[ ad[b[i]][j] ] == -1) {
-					prv[ ad[b[i]][j] ] = b[i];
-					end.erase(b[i]);
-				}
-				in.insert( { indeg[ ad[b[i]][j] ],  ad[b[i]][j] }) ;
-			}
-		}
-	}
-
-	// cout << "prev ";
-	// forn(i,n) {
-	// 	cout << prv[i] << " ";
-	// } cout << ln;
-
-	// cout << mxwidht << ln;
-
-	// cout << "end ";
-	// for(auto u: end) cout << u << " ";
-	// cout << ln;
-
-	vector<vector<int>> paths;
-	for(auto it: end) {
-		paths.pb({});
-		paths.back().pb(it);
-		int u = it;
-		while(prv[u] != -1) {
-			paths.back().pb(prv[u]);
-			u = prv[u];
-		}
-		reverse(all(paths.back()));
-	}
-
-	// forn(i, paths.size()) {
-		// cout << "i" << i << " ";
-	// 	forn(j, paths[i].size()) {
-	// 		cout << paths[i][j] << " ";
-	// 	}
-	// 	cout << ln;
-	// }
-	
-	forn(i, paths.size()) {
-		if(!ans.empty()) ans.pb(-1);
-		set<int> st;
-		forn(j, paths[i].size()) {
-			forn(it, d) {
-				if(s [ paths[i][j] ][ it ] == '1' && !st.count(it)) {
-					st.insert(it);
-					ans.pb(it);
-				}
-			}
-		}
-		st.clear();
-	}
-	cout << ans.size() << ln;
-	forn(it, ans.size()) {
-		if(ans[it] == -1) cout << "R ";
-		else cout << ans[it] << " ";
-	}
-	
 }
-
 
 int main() {
     IO;
 	// cout.flush();
 	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
-    // cin >> t;
-    while(t--) 
+    cin >> t;
+	int tt = t;
+    while(t--) {
+		cout << "Case #"<<tt-t<<": ";
 		go();
+	}
 }
