@@ -55,158 +55,148 @@ void seive() {
 	}
 }
 
-ll n, m;
-ll pi[101];
-ll cn[101];
-ll ans = 0;
-void dp(int i, vector<int> cni, ll p, ll s) {
-	if(i >= n) return;
-	// cout << i << " " << p << " " << s << ln;
-	// forn(i, cni.size()) {
-	// 	cout << cni[i] << " ";
 
-	// }cout << ln;
-	if(p > s) {
-		return;
-	}
-	if(p == s) {
-		ans = max(ans, s);
-	}
-
-	if(i == n-1) {
-		if(p == s) {
-			ans = max(ans, s);
+ll mod = 1e9+7;
+ll f(int d) {
+	int ans = 0;
+	forn(i,32) {
+		if(d & (1 << i)) {
+			ans ++;
 		}
-		while(cni[i] < cn[i]) {
-			cni[i]++;
-			p *= pi[i];
-			s -= pi[i];
-			if(p == s) {
-				ans = max(ans, s);
-			}
-			if(p > s) {
-				return;
-			}
-		}
-		return;
 	}
-	dp(i+1, cni, p, s);
-	while(cni[i] < cn[i]) {
-		cni[i]++;
-		p *= pi[i];
-		s -= pi[i];
-		// ll s0 = s;
-		// bool isc = false;
-		// forn(it, cni[i]) {
-		// 	if(s0 % pi[i] > 0) {
-		// 		isc = true;
-		// 		break;
-		// 	}
-		// 	s0 /= pi[i];
-		// }
-
-		// if(isc)continue;
-		// if(cni[i] == cn[i]) {
-		// 	if(s % pi[i] > 0) return; 
-		// }
-		dp(i+1, cni, p, s);
-	}
-
-
+	return 32 - ans;
+}
+ll fact[300001],infac[300001];
+ll fe(ll a,ll b){
+    ll temp=a;
+    ll ans=1ll;
+    while(b){
+        if(b&1){
+            ans*=(ll)temp;
+            ans%=mod;
+        }
+        b/=2ll;
+        temp=temp*(ll)temp;
+        temp%=mod;
+    }
+    ans += mod;
+    ans %= mod;
+    return ans%mod;
+}
+ll mi(ll a){
+    return(fe(a,mod-2));
 }
 
-void go() {
-	cin >> n;
-	vector<int> cni;
-	cni.assign(n, 0);
-	ans = 0;
-	ll su = 0;
-	ll p = 1, s = 0;
-	ll s0 = 0;
-	forn(i,n) {
-		cin >> pi[i] >> cn[i];
-		su += cn[i];
-		s += cn[i]* pi[i];
-	}
-	s0 = s;
-	reverse(pi, pi + n);
-	reverse(cn, cn + n);
-	
-	dp(0, cni, 1, s);
-	cout << ans << ln;
+void fac(){
+    fact[0]=1;
+    infac[0]=1;
+    forsn(i,1,200009){
+        fact[i]=fact[i-1]*i;
+        fact[i]%=mod;
+        infac[i]=mi(fact[i]);
+        infac[i]%=mod;
+    }
+}
+ll ncr(ll a,ll b){
+    if(a<b || a<=0)return 0;
+    ll ans=fact[a];
+    ans*=infac[b];
+    ans%=mod;
+    ans*=infac[a-b];
+    ans%=mod;
+    return ans;
 }
 
 
-vector<ll> s;
-vector<ll> p;
-vector<ll> t, to;
-vector<ll> num, den;
-void chk(ll it) {
-	vector<ll> sc;
-	sc.assign(n, 0);
-	forn(i,m) {
-		forn(j, n) {
-			if((it & (1 << i)) ^ (s[j]=='0')) {
-				sc[j]++;
-			}
-		}
-	}
+ll n;
+ll a[200000];
+ll p;
+map<ll, set<ll> > m;
+void go(){
+	m.clear();
+	cin >> n >> p;
+	ll mx = -1;
 	forn(i,n) {
-		if(sc[i] != p[i]) return;
-	}
-	forn(i, m) {
-		if(it & (1 << i)) t[i] ++;
-		to[i] ++;
-	}
-}
-
-void go1() {
-	cin >> n >> m;
-	assert(m <= 10);
-	s.assign(n, {});
-	p.assign(n, 0);
-	num.assign(n,0);
-	den.assign(n,0);
-	t.assign(m, 0);
-	to.assign(m, 0);
-	forn(i,n) {
-		cin >> s[i] >> p[i];
-	}
-	forn(it, (1 << m)) {
-		chk(it);
+		cin >> a[i];
+		// mx = max(mx, a[i]);
+		m[a[i]].insert(i);
 	}
 
-	forn(i,m) {
-		if(2*t[i] < to[i]) {
-			num[i] = to[i]-t[i];
-		}
-		else num[i] = t[i];
-		den[i] = to[i];
-		assert(den[i] == (1 << m));
-		// ll g = __gcd(num[i], den[i]);
-		// num[i] /= g;
-		// den[i] /= g;
-	}
+	ll comps = 0;
 	ll ans = 0;
-	forn(it, (1 << m)) {
-		forn(i, m) {
-			if(it & (1 << i)) {
+	ll iters = 0;
+	while(!m.empty()) {
 
-			}
+		if(m.begin()->second.empty()) {
+			m.erase(m.begin());
+			continue;
 		}
+		ll pos = *(m.begin()->second.begin());
+		
+		// cout << pos << ln;
+		// if(a[pos] > p) break;
+		m[a[pos]].erase(pos);
+		if(m[a[pos]].empty()) m.erase(a[pos]);
+		int i = pos+1;
+		while(i < n and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
+			m[a[i]].erase(i);
+			if(m[a[i]].empty()) m.erase(a[i]);
+			ans += min(p, a[pos]);
+			i++;
+		}
+		i = pos-1;
+		while(i >= 0 and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
+			m[a[i]].erase(i);
+			if(m[a[i]].empty()) m.erase(a[i]);
+			ans += min(p, a[pos]);
+			i--;
+		}
+		comps ++;
 	}
 
+	ans += (comps-1)* p;
+	cout << ans << ln;
+	return;
+
+	
+	
+	// forn(i,n) {
+	// 	if(a[i] >= p) {
+	// 		break;
+	// 	}
+	// 	if(m[a[i]] == 0) continue;
+	// 	m[a[i]]--;
+	// 	comps ++;
+
+	// 	ll d = 1;
+	// 	while(d* a[i] <= mx) {
+	// 		ll dd = d* a[i];
+	// 		if(m[dd] > 0) {
+	// 			ans += (m[dd]* a[i]);
+	// 			m[dd]=0;
+	// 		}
+	// 		d++;
+	// 	}
+	// }
+	// for(auto u: m) {
+	// 	comps += u.second;
+	// }
+	// ans += p* (comps-1);
+	// cout << ans << ln;
+
 }
+
 
 int main() {
     IO;
+	// fac();
 	// cout.flush();
-	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
     cin >> t;
 	int tt = t;
     while(t--) {
-		cout << "Case #"<<tt-t<<": ";
+		// cout << "Case #"<<tt-t<<": ";
 		go();
 	}
 }
