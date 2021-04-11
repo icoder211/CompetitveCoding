@@ -55,74 +55,147 @@ void seive() {
 	}
 }
 
-int n, m;
-int a[26][26];
+ll n, m;
+ll pi[101];
+ll cn[101];
+ll ans = 0;
+void dp(int i, vector<int> cni, ll p, ll s) {
+	if(i >= n) return;
+	// cout << i << " " << p << " " << s << ln;
+	// forn(i, cni.size()) {
+	// 	cout << cni[i] << " ";
+
+	// }cout << ln;
+	if(p > s) {
+		return;
+	}
+	if(p == s) {
+		ans = max(ans, s);
+	}
+
+	if(i == n-1) {
+		if(p == s) {
+			ans = max(ans, s);
+		}
+		while(cni[i] < cn[i]) {
+			cni[i]++;
+			p *= pi[i];
+			s -= pi[i];
+			if(p == s) {
+				ans = max(ans, s);
+			}
+			if(p > s) {
+				return;
+			}
+		}
+		return;
+	}
+	dp(i+1, cni, p, s);
+	while(cni[i] < cn[i]) {
+		cni[i]++;
+		p *= pi[i];
+		s -= pi[i];
+		// ll s0 = s;
+		// bool isc = false;
+		// forn(it, cni[i]) {
+		// 	if(s0 % pi[i] > 0) {
+		// 		isc = true;
+		// 		break;
+		// 	}
+		// 	s0 /= pi[i];
+		// }
+
+		// if(isc)continue;
+		// if(cni[i] == cn[i]) {
+		// 	if(s % pi[i] > 0) return; 
+		// }
+		dp(i+1, cni, p, s);
+	}
+
+
+}
+
 void go() {
+	cin >> n;
+	vector<int> cni;
+	cni.assign(n, 0);
+	ans = 0;
+	ll su = 0;
+	ll p = 1, s = 0;
+	ll s0 = 0;
+	forn(i,n) {
+		cin >> pi[i] >> cn[i];
+		su += cn[i];
+		s += cn[i]* pi[i];
+	}
+	s0 = s;
+	reverse(pi, pi + n);
+	reverse(cn, cn + n);
+	
+	dp(0, cni, 1, s);
+	cout << ans << ln;
+}
+
+
+vector<ll> s;
+vector<ll> p;
+vector<ll> t, to;
+vector<ll> num, den;
+void chk(ll it) {
+	vector<ll> sc;
+	sc.assign(n, 0);
+	forn(i,m) {
+		forn(j, n) {
+			if((it & (1 << i)) ^ (s[j]=='0')) {
+				sc[j]++;
+			}
+		}
+	}
+	forn(i,n) {
+		if(sc[i] != p[i]) return;
+	}
+	forn(i, m) {
+		if(it & (1 << i)) t[i] ++;
+		to[i] ++;
+	}
+}
+
+void go1() {
 	cin >> n >> m;
-	cout << ln;
+	assert(m <= 10);
+	s.assign(n, {});
+	p.assign(n, 0);
+	num.assign(n,0);
+	den.assign(n,0);
+	t.assign(m, 0);
+	to.assign(m, 0);
 	forn(i,n) {
-		string s;
-		cin >> s;
-		forn(j,m) {
-			a[i][j] = s[j];
-			if(a[i][j] == '?') a[i][j] = -1;
-		}
+		cin >> s[i] >> p[i];
 	}
-	bool row = true;
-	forn(i,n) {
-		int j = 0;
-		while(j < m and a[i][j] == -1) {
-			j++;
-		}
-		if(j == m) {
-			row = false;
-			break;
-		}
+	forn(it, (1 << m)) {
+		chk(it);
 	}
-	// cout << "row " << row<<endl;
-	if(row) {
-		forn(i,n) {
-			int j = 0;
-			while(j < m and a[i][j] == -1) {
-				j++;
-			}
-			while(j < m) {
-				int k = j-1;
-				while(k >= 0 and a[i][k] == -1) {
-					a[i][k] = a[i][j]; k--;
-				}
-				k = j+1;
-				while(k < m and a[i][k] == -1) {
-					a[i][k] = a[i][j]; k++;
-				}
-				j = k;
-			}
+
+	forn(i,m) {
+		if(2*t[i] < to[i]) {
+			num[i] = to[i]-t[i];
 		}
-	}else {
-		forn(j,m) {
-			int i = 0;
-			while(i < n and a[i][j] == -1) {
-				i++;
-			}
-			while(i < n) {
-				int k = i-1;
-				while(k >= 0 and a[k][j] == -1) {
-					a[k][j] = a[i][j]; k--;
-				}
-				k = i+1;
-				while(k < n and a[k][j] == -1) {
-					a[k][j] = a[i][j]; k++;
-				}
-				i = k;
+		else num[i] = t[i];
+		den[i] = to[i];
+		assert(den[i] == (1 << m));
+		// ll g = __gcd(num[i], den[i]);
+		// num[i] /= g;
+		// den[i] /= g;
+	}
+	ll ans = 0;
+	forn(it, (1 << m)) {
+		forn(i, m) {
+			if(it & (1 << i)) {
+
 			}
 		}
 	}
-	forn(i,n) {
-		forn(j,n) {
-			cout << (char)a[i][j];
-		}
-		cout << ln;
-	}
+
 }
 
 int main() {
