@@ -216,48 +216,80 @@ void go1() {
 		ll j = 0;
 		while(j < m and a[i][j] == 0) j++;
 		while(j < m) {
+			// cout<<j<<'f';
+
 			ll k = j;
 			while(k < m and a[i][k] == 1) k++;
 			if(k-j ==2) {
 				j = k;
-				ans ++;ans %= mod;
+				ans += pow2[z-2];
+				ans %= mod;
+				while(j < m and a[i][j] == 0) j++;
 				continue;
 			}
 			else if(k-j < 2) {
 				j = k;
+				while(j < m and a[i][j] == 0) j++;
+				continue;
+			}else if(k-j == 3) {
+				ans += 3* pow2[z-3];
+				ans %= mod;
+				j = k;
+				while(j < m and a[i][j] == 0) j++;
 				continue;
 			}
-
+			ans += 2* pow2[z-2];
+			ans %= mod;
 			ll l = k-j;
-			ans += pow2[z-2];
-			ans %= mod;
-			ans += ((l-2)* pow2[z-3])% mod;
-			ans %= mod;
+			ll d = 3;
+			while(l-d>0) {
+				ans += (l-d)* pow2[z-d-1];
+				ans %= mod;
+				d += 2;
+			}
 			j = k;
+			while(j < m and a[i][j] == 0) j++;
+
 		}
 	}
+	// cout << ans << " ";
 	forn(i,m) {
 		ll j = 0;
 		while(j < n and a[j][i] == 0) j++;
 		while(j < n) {
+			// cout<<i<<" " <<j<<ln;
 			ll k = j;
 			while(k < n and a[k][i] == 1) k++;
 			if(k-j ==2) {
 				j = k;
-				ans ++;ans %= mod;
+				ans += pow2[z-2];
+				ans %= mod;
+				while(j < n and a[j][i] == 0) j++;
 				continue;
 			}
 			else if(k-j < 2) {
 				j = k;
+				while(j < n and a[j][i] == 0) j++;
+				continue;
+			}else if(k-j == 3) {
+				ans += 3* pow2[z-3];
+				ans %= mod;
+				j = k;
+				while(j < n and a[j][i] == 0) j++;
 				continue;
 			}
-
+			ans += 2* pow2[z-2];
+			ans %= mod;
 			ll l = k-j;
-			ans += pow2[z-2];
-			ans %= mod;
-			ans += ((l-2)* pow2[z-3])% mod;
-			ans %= mod;
+			ll d = 3;
+			while(l-d>0) {
+				ans += (l-d)* pow2[z-d-1];
+				ans %= mod;
+				d += 2;
+			}
 			j = k;
+			while(j < n and a[j][i] == 0) j++;
+
 		}
 	}
 	cout << ans << ln;
