@@ -56,7 +56,8 @@ void seive() {
 }
 
 
-ll mod = 1e9+7;
+// ll mod = 1e9+7;
+ll mod = 998244353;
 ll f(int d) {
 	int ans = 0;
 	forn(i,32) {
@@ -187,49 +188,79 @@ ll n;
 // }
 
 
-int a, b, c;int k;
+ll m;
+vector<vector<ll> > a;
+ll pow2[300005];
 void go1() {
-	cin >> n >> k;
-	a = 0;
-	b = 1;
-	int it = 0;
-	cout<<'a';
-	int n0 = n;
-	n--;
-	string ans;
-	while(it < n) {
-
-		if(it%2 == 0) {
-			ans.pb((char)(a+'a'));
-			it++;
-		}
-		else {
-			ans.pb((char)(b+'a'));
-			it++;
-			b++;
-			if(b==k) {
-				a++;
-				if(it>=n) {
-					break;
-				}
-				ans.pb((char)(a+'a'));n--;
-				b=a+1;
-				if(b==k) {
-					// cout<<(char)(a+'a');n--;
-					b=1;
-					a=0;
-					if(it>=n) {
-						break;
-					}
-					ans.pb((char)(a+'a'));n--;
-				}
+	cin >> n >> m;
+	pow2[0] = 1;
+	a.assign(n, {});
+	ll z = 0;
+	forn(i,n) a[i].assign(m,0);
+	forsn(i,1,300005) {
+		pow2[i] = pow2[i-1]*2;
+		pow2[i] %= mod;
+	}
+	forn(i,n) {
+		string s;cin >> s;
+		forn(j,m) {
+			if(s[j] == '*') a[i][j] = 0;
+			else {
+				a[i][j] = 1;
+				z++;
 			}
 		}
-		// it++;
 	}
-	
-	// assert(ans.size()==n0);
-	cout<<ans.substr(0,n0)<<ln;
+	ll ans = 0;
+	forn(i,n) {
+		ll j = 0;
+		while(j < m and a[i][j] == 0) j++;
+		while(j < m) {
+			ll k = j;
+			while(k < m and a[i][k] == 1) k++;
+			if(k-j ==2) {
+				j = k;
+				ans ++;ans %= mod;
+				continue;
+			}
+			else if(k-j < 2) {
+				j = k;
+				continue;
+			}
+
+			ll l = k-j;
+			ans += pow2[z-2];
+			ans %= mod;
+			ans += ((l-2)* pow2[z-3])% mod;
+			ans %= mod;
+			j = k;
+		}
+	}
+	forn(i,m) {
+		ll j = 0;
+		while(j < n and a[j][i] == 0) j++;
+		while(j < n) {
+			ll k = j;
+			while(k < n and a[k][i] == 1) k++;
+			if(k-j ==2) {
+				j = k;
+				ans ++;ans %= mod;
+				continue;
+			}
+			else if(k-j < 2) {
+				j = k;
+				continue;
+			}
+
+			ll l = k-j;
+			ans += pow2[z-2];
+			ans %= mod;
+			ans += ((l-2)* pow2[z-3])% mod;
+			ans %= mod;
+			j = k;
+		}
+	}
+	cout << ans << ln;
 }
 
 int main() {
