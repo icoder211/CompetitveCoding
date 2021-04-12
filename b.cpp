@@ -109,83 +109,128 @@ ll ncr(ll a,ll b){
 
 
 ll n;
-ll a[200000];
-ll p;
-map<ll, set<ll> > m;
-void go(){
-	m.clear();
-	cin >> n >> p;
-	ll mx = -1;
-	forn(i,n) {
-		cin >> a[i];
-		// mx = max(mx, a[i]);
-		m[a[i]].insert(i);
-	}
+// ll a[200000];
+// ll p;
+// map<ll, set<ll> > m;
+// void go(){
+// 	m.clear();
+// 	cin >> n >> p;
+// 	ll mx = -1;
+// 	forn(i,n) {
+// 		cin >> a[i];
+// 		// mx = max(mx, a[i]);
+// 		m[a[i]].insert(i);
+// 	}
 
-	ll comps = 0;
-	ll ans = 0;
-	ll iters = 0;
-	while(!m.empty()) {
+// 	ll comps = 0;
+// 	ll ans = 0;
+// 	ll iters = 0;
+// 	while(!m.empty()) {
 
-		if(m.begin()->second.empty()) {
-			m.erase(m.begin());
-			continue;
-		}
-		ll pos = *(m.begin()->second.begin());
+// 		if(m.begin()->second.empty()) {
+// 			m.erase(m.begin());
+// 			continue;
+// 		}
+// 		ll pos = *(m.begin()->second.begin());
 		
-		// cout << pos << ln;
-		// if(a[pos] > p) break;
-		m[a[pos]].erase(pos);
-		if(m[a[pos]].empty()) m.erase(a[pos]);
-		int i = pos+1;
-		while(i < n and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
-			m[a[i]].erase(i);
-			if(m[a[i]].empty()) m.erase(a[i]);
-			ans += min(p, a[pos]);
-			i++;
+// 		// cout << pos << ln;
+// 		// if(a[pos] > p) break;
+// 		m[a[pos]].erase(pos);
+// 		if(m[a[pos]].empty()) m.erase(a[pos]);
+// 		int i = pos+1;
+// 		while(i < n and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
+// 			m[a[i]].erase(i);
+// 			if(m[a[i]].empty()) m.erase(a[i]);
+// 			ans += min(p, a[pos]);
+// 			i++;
+// 		}
+// 		i = pos-1;
+// 		while(i >= 0 and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
+// 			m[a[i]].erase(i);
+// 			if(m[a[i]].empty()) m.erase(a[i]);
+// 			ans += min(p, a[pos]);
+// 			i--;
+// 		}
+// 		comps ++;
+// 	}
+
+// 	ans += (comps-1)* p;
+// 	cout << ans << ln;
+// 	return;
+
+	
+	
+// 	// forn(i,n) {
+// 	// 	if(a[i] >= p) {
+// 	// 		break;
+// 	// 	}
+// 	// 	if(m[a[i]] == 0) continue;
+// 	// 	m[a[i]]--;
+// 	// 	comps ++;
+
+// 	// 	ll d = 1;
+// 	// 	while(d* a[i] <= mx) {
+// 	// 		ll dd = d* a[i];
+// 	// 		if(m[dd] > 0) {
+// 	// 			ans += (m[dd]* a[i]);
+// 	// 			m[dd]=0;
+// 	// 		}
+// 	// 		d++;
+// 	// 	}
+// 	// }
+// 	// for(auto u: m) {
+// 	// 	comps += u.second;
+// 	// }
+// 	// ans += p* (comps-1);
+// 	// cout << ans << ln;
+
+// }
+
+
+int a, b, c;int k;
+void go1() {
+	cin >> n >> k;
+	a = 0;
+	b = 1;
+	int it = 0;
+	cout<<'a';
+	int n0 = n;
+	n--;
+	string ans;
+	while(it < n) {
+
+		if(it%2 == 0) {
+			ans.pb((char)(a+'a'));
+			it++;
 		}
-		i = pos-1;
-		while(i >= 0 and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
-			m[a[i]].erase(i);
-			if(m[a[i]].empty()) m.erase(a[i]);
-			ans += min(p, a[pos]);
-			i--;
+		else {
+			ans.pb((char)(b+'a'));
+			it++;
+			b++;
+			if(b==k) {
+				a++;
+				if(it>=n) {
+					break;
+				}
+				ans.pb((char)(a+'a'));n--;
+				b=a+1;
+				if(b==k) {
+					// cout<<(char)(a+'a');n--;
+					b=1;
+					a=0;
+					if(it>=n) {
+						break;
+					}
+					ans.pb((char)(a+'a'));n--;
+				}
+			}
 		}
-		comps ++;
+		// it++;
 	}
-
-	ans += (comps-1)* p;
-	cout << ans << ln;
-	return;
-
 	
-	
-	// forn(i,n) {
-	// 	if(a[i] >= p) {
-	// 		break;
-	// 	}
-	// 	if(m[a[i]] == 0) continue;
-	// 	m[a[i]]--;
-	// 	comps ++;
-
-	// 	ll d = 1;
-	// 	while(d* a[i] <= mx) {
-	// 		ll dd = d* a[i];
-	// 		if(m[dd] > 0) {
-	// 			ans += (m[dd]* a[i]);
-	// 			m[dd]=0;
-	// 		}
-	// 		d++;
-	// 	}
-	// }
-	// for(auto u: m) {
-	// 	comps += u.second;
-	// }
-	// ans += p* (comps-1);
-	// cout << ans << ln;
-
+	// assert(ans.size()==n0);
+	cout<<ans.substr(0,n0)<<ln;
 }
-
 
 int main() {
     IO;
@@ -193,10 +238,10 @@ int main() {
 	// cout.flush();
 	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
-    cin >> t;
+    // cin >> t;
 	int tt = t;
     while(t--) {
 		// cout << "Case #"<<tt-t<<": ";
-		go();
+		go1();
 	}
 }
