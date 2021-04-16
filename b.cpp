@@ -188,111 +188,73 @@ ll n;
 // }
 
 
-ll m;
-vector<vector<ll> > a;
-ll pow2[300005];
-void go1() {
-	cin >> n >> m;
-	pow2[0] = 1;
-	a.assign(n, {});
-	ll z = 0;
-	forn(i,n) a[i].assign(m,0);
-	forsn(i,1,300005) {
-		pow2[i] = pow2[i-1]*2;
-		pow2[i] %= mod;
-	}
-	forn(i,n) {
-		string s;cin >> s;
-		forn(j,m) {
-			if(s[j] == '*') a[i][j] = 0;
-			else {
-				a[i][j] = 1;
-				z++;
+void go() {
+	cin >> n;
+	string a[3];
+	forn(i,3)cin >>a[i];
+	string res[3];
+	n*=2;
+	forn(j,3) {
+		string s = a[j];
+		string t = a[(j+1)%3];
+		ll ss =0 , tt=0;
+		string ans;
+		int cur, prev;
+		prev=n;
+		for(ll i = n-1;i >= 0;i--) {
+			ss += s[i]=='1';
+			tt += t[i] == '1';
+			int mx =0 ;
+			if(ss == tt) {
+				cur = i;
+
+				if(ss > prev-i-ss) {
+					mx += ss;
+					vector<int> q,w;int one=0, onee=0;
+					forsn(it, cur, prev) {
+						if(s[it]=='0') one++;
+						else {q.pb(one);one=0;}
+						if(t[it]=='0') onee++;
+						else {w.pb(onee);onee=0;}
+						
+					}
+					
+					forn(it, ss) {
+						forn(itt, max(w[it], q[it])) ans.pb('0');
+						ans.pb('1');
+					}
+				}
+				else {
+					mx += prev-i-ss;
+
+					vector<int> q,w;int one=0, onee=0;
+					forsn(it, cur, prev) {
+						if(s[it]=='1') one++;
+						else {q.pb(one);one=0;}
+						if(t[it]=='1') onee++;
+						else {w.pb(onee);onee=0;}
+						
+					}
+					
+					forn(it, prev-i-ss) {
+						forn(itt, max(w[it], q[it])) ans.pb('1');
+						ans.pb('0');
+					}
+				}
+				prev = cur;
+				ss=0;
+				tt=0;
 			}
 		}
-	}
-	ll ans = 0;
-	forn(i,n) {
-		ll j = 0;
-		while(j < m and a[i][j] == 0) j++;
-		while(j < m) {
-			// cout<<j<<'f';
-
-			ll k = j;
-			while(k < m and a[i][k] == 1) k++;
-			if(k-j ==2) {
-				j = k;
-				ans += pow2[z-2];
-				ans %= mod;
-				while(j < m and a[i][j] == 0) j++;
-				continue;
-			}
-			else if(k-j < 2) {
-				j = k;
-				while(j < m and a[i][j] == 0) j++;
-				continue;
-			}else if(k-j == 3) {
-				ans += 3* pow2[z-3];
-				ans %= mod;
-				j = k;
-				while(j < m and a[i][j] == 0) j++;
-				continue;
-			}
-			ans += 2* pow2[z-2];
-			ans %= mod;
-			ll l = k-j;
-			ll d = 3;
-			while(l-d>0) {
-				ans += (l-d)* pow2[z-d-1];
-				ans %= mod;
-				d += 2;
-			}
-			j = k;
-			while(j < m and a[i][j] == 0) j++;
-
+		cout<<ans<<" ";
+		res[j]  = ans;
+		if(ans.size() <= (3*n)/2) {
+			cout<<ans << ln;
+			return;
 		}
 	}
-	// cout << ans << " ";
-	forn(i,m) {
-		ll j = 0;
-		while(j < n and a[j][i] == 0) j++;
-		while(j < n) {
-			// cout<<i<<" " <<j<<ln;
-			ll k = j;
-			while(k < n and a[k][i] == 1) k++;
-			if(k-j ==2) {
-				j = k;
-				ans += pow2[z-2];
-				ans %= mod;
-				while(j < n and a[j][i] == 0) j++;
-				continue;
-			}
-			else if(k-j < 2) {
-				j = k;
-				while(j < n and a[j][i] == 0) j++;
-				continue;
-			}else if(k-j == 3) {
-				ans += 3* pow2[z-3];
-				ans %= mod;
-				j = k;
-				while(j < n and a[j][i] == 0) j++;
-				continue;
-			}
-			ans += 2* pow2[z-2];
-			ans %= mod;
-			ll l = k-j;
-			ll d = 3;
-			while(l-d>0) {
-				ans += (l-d)* pow2[z-d-1];
-				ans %= mod;
-				d += 2;
-			}
-			j = k;
-			while(j < n and a[j][i] == 0) j++;
+	
 
-		}
-	}
-	cout << ans << ln;
 }
 
 int main() {
@@ -301,10 +263,10 @@ int main() {
 	// cout.flush();
 	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
-    // cin >> t;
+    cin >> t;
 	int tt = t;
     while(t--) {
 		// cout << "Case #"<<tt-t<<": ";
-		go1();
+		go();
 	}
 }
