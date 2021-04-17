@@ -198,17 +198,20 @@ void go() {
 		string s = a[j];
 		string t = a[(j+1)%3];
 		ll ss =0 , tt=0;
-		string ans;
+		string anss;
 		int cur, prev;
 		prev=n;
 		for(ll i = n-1;i >= 0;i--) {
 			ss += s[i]=='1';
 			tt += t[i] == '1';
-			int mx =0 ;
+			int mx = 0;
+			string ans;
+
 			if(ss == tt) {
+				// cout<<i<<ln;
 				cur = i;
 
-				if(ss > prev-i-ss) {
+				if(ss > prev-cur-ss) {
 					mx += ss;
 					vector<int> q,w;int one=0, onee=0;
 					forsn(it, cur, prev) {
@@ -218,14 +221,16 @@ void go() {
 						else {w.pb(onee);onee=0;}
 						
 					}
-					
+					assert(q.size()==w.size());
+					assert(q.size()==ss);
 					forn(it, ss) {
 						forn(itt, max(w[it], q[it])) ans.pb('0');
 						ans.pb('1');
 					}
+					forn(itt,max(one,onee)) ans.pb('0');
 				}
 				else {
-					mx += prev-i-ss;
+					mx += prev-cur-ss;
 
 					vector<int> q,w;int one=0, onee=0;
 					forsn(it, cur, prev) {
@@ -235,24 +240,87 @@ void go() {
 						else {w.pb(onee);onee=0;}
 						
 					}
-					
-					forn(it, prev-i-ss) {
+					assert(q.size()==w.size());
+					assert(q.size()==prev-cur-ss);
+					forn(it, prev-cur-ss) {
 						forn(itt, max(w[it], q[it])) ans.pb('1');
 						ans.pb('0');
 					}
+					forn(itt,max(one,onee)) ans.pb('1');
 				}
 				prev = cur;
 				ss=0;
 				tt=0;
+			}else if(i == 0) {
+				cur=0;
+				if(min(ss,tt)>min(prev-ss, prev-tt)) {
+					//go 1
+					mx += min(ss,tt);
+					vector<int> q,w;int one=0, onee=0;
+					forsn(it, 0, prev) {
+						if(s[it]=='0') one++;
+						else {q.pb(one);one=0;}
+						if(t[it]=='0') onee++;
+						else {w.pb(onee);onee=0;}
+					}
+					// s.resize(min(ss,tt));
+					// w.resize(min(ss,tt));
+
+					forn(it, min(ss,tt)) {
+						forn(itt, max(w[it], q[it])) ans.pb('0');
+						ans.pb('1');
+					}
+					forsn(it, min(ss,tt), ss) {
+						forn(itt, q[it]) ans.pb('0');
+						ans.pb('1');
+					}
+					forsn(it, min(ss,tt), tt) {
+						forn(itt, w[it]) ans.pb('0');
+						ans.pb('1');
+					}
+					forn(itt, max(one,onee)) ans.pb('0');
+				}else {
+					//go 0
+					mx += min(prev-ss, prev-tt);
+					vector<int> q,w;int one=0, onee=0;
+					forsn(it, 0, prev) {
+						if(s[it]=='1') one++;
+						else {q.pb(one);one=0;}
+						if(t[it]=='1') onee++;
+						else {w.pb(onee);onee=0;}
+					}
+					// s.resizemin(prev-ss, prev-tt));
+					// w.resize(min(prev-ss, prev-tt));
+
+					forn(it,min(prev-ss, prev-tt)) {
+						forn(itt, max(w[it], q[it])) ans.pb('1');
+						ans.pb('0');
+					}
+					forsn(it, min(prev-ss, prev-tt), prev-ss) {
+						forn(itt, q[it]) ans.pb('1');
+						ans.pb('0');
+					}
+					forsn(it, min(prev-ss, prev-tt), prev-tt) {
+						forn(itt, w[it]) ans.pb('1');
+						ans.pb('0');
+					}
+					forn(itt, max(one,onee)) ans.pb('1');
+
+				}
 			}
+			// if(!ans.empty()) cout<<ans<<endl;
+			reverse(all(ans));
+			forn(i,ans.size()) anss.pb(ans[i]);
 		}
-		cout<<ans<<" ";
-		res[j]  = ans;
-		if(ans.size() <= (3*n)/2) {
-			cout<<ans << ln;
+		reverse(all(anss));
+		// cout<<anss<<endl;
+		res[j]  = anss;
+		if(anss.size() <= (3*n)/2) {
+			cout<<anss << ln;
 			return;
 		}
 	}
+	assert(2>3);
 	
 
 }
