@@ -39,17 +39,17 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	y=y0;
 	return g;
 }
-vector<int> pr;
+vector<ll> pr;
 void seive() {
-	vector<int> vis;
+	vector<ll> vis;
 	pr.clear();
 	vis.assign(1e7+1, 0);
-	int i =0 ;
-	for(int i = 2;i * i <= 1e7; i++ ) {
+	ll i =0 ;
+	for(ll i = 2;i <= 1e7; i++ ) {
 		if(vis[i]) continue;
 		pr.pb(i);
 		// cout << i << " ";
-		for(int j = i*i;j <= 1e7;j += i) {
+		for(ll j = i*1ll*i;j <= 1e7;j += i) {
 			vis[j] = 1;
 		}
 	}
@@ -110,7 +110,7 @@ ll ncr(ll a,ll b){
 
 
 ll n;
-// ll a[200000];
+// ll a[200000]
 // ll p;
 // map<ll, set<ll> > m;
 // void go(){
@@ -122,18 +122,15 @@ ll n;
 // 		// mx = max(mx, a[i]);
 // 		m[a[i]].insert(i);
 // 	}
-
-// 	ll comps = 0;
+// 	ll comps = 0
 // 	ll ans = 0;
 // 	ll iters = 0;
 // 	while(!m.empty()) {
-
 // 		if(m.begin()->second.empty()) {
 // 			m.erase(m.begin());
 // 			continue;
 // 		}
-// 		ll pos = *(m.begin()->second.begin());
-		
+// 		ll pos = *(m.begin()->second.begin());		
 // 		// cout << pos << ln;
 // 		// if(a[pos] > p) break;
 // 		m[a[pos]].erase(pos);
@@ -154,13 +151,9 @@ ll n;
 // 		}
 // 		comps ++;
 // 	}
-
 // 	ans += (comps-1)* p;
 // 	cout << ans << ln;
 // 	return;
-
-	
-	
 // 	// forn(i,n) {
 // 	// 	if(a[i] >= p) {
 // 	// 		break;
@@ -168,7 +161,6 @@ ll n;
 // 	// 	if(m[a[i]] == 0) continue;
 // 	// 	m[a[i]]--;
 // 	// 	comps ++;
-
 // 	// 	ll d = 1;
 // 	// 	while(d* a[i] <= mx) {
 // 	// 		ll dd = d* a[i];
@@ -184,157 +176,175 @@ ll n;
 // 	// }
 // 	// ans += p* (comps-1);
 // 	// cout << ans << ln;
-
 // }
 
-
+ll a[100005];
 void go() {
 	cin >> n;
-	string a[3];
-	forn(i,3)cin >>a[i];
-	string res[3];
-	n*=2;
-	forn(j,3) {
-		string s = a[j];
-		string t = a[(j+1)%3];
-		ll ss =0 , tt=0;
-		string anss;
-		int cur, prev;
-		prev=n;
-		for(ll i = n-1;i >= 0;i--) {
-			ss += s[i]=='1';
-			tt += t[i] == '1';
-			int mx = 0;
-			string ans;
-
-			if(ss == tt) {
-				// cout<<i<<ln;
-				cur = i;
-
-				if(ss > prev-cur-ss) {
-					mx += ss;
-					vector<int> q,w;int one=0, onee=0;
-					forsn(it, cur, prev) {
-						if(s[it]=='0') one++;
-						else {q.pb(one);one=0;}
-						if(t[it]=='0') onee++;
-						else {w.pb(onee);onee=0;}
-						
-					}
-					assert(q.size()==w.size());
-					assert(q.size()==ss);
-					forn(it, ss) {
-						forn(itt, max(w[it], q[it])) ans.pb('0');
-						ans.pb('1');
-					}
-					forn(itt,max(one,onee)) ans.pb('0');
-				}
-				else {
-					mx += prev-cur-ss;
-
-					vector<int> q,w;int one=0, onee=0;
-					forsn(it, cur, prev) {
-						if(s[it]=='1') one++;
-						else {q.pb(one);one=0;}
-						if(t[it]=='1') onee++;
-						else {w.pb(onee);onee=0;}
-						
-					}
-					assert(q.size()==w.size());
-					assert(q.size()==prev-cur-ss);
-					forn(it, prev-cur-ss) {
-						forn(itt, max(w[it], q[it])) ans.pb('1');
-						ans.pb('0');
-					}
-					forn(itt,max(one,onee)) ans.pb('1');
-				}
-				prev = cur;
-				ss=0;
-				tt=0;
-			}else if(i == 0) {
-				cur=0;
-				if(min(ss,tt)>min(prev-ss, prev-tt)) {
-					//go 1
-					mx += min(ss,tt);
-					vector<int> q,w;int one=0, onee=0;
-					forsn(it, 0, prev) {
-						if(s[it]=='0') one++;
-						else {q.pb(one);one=0;}
-						if(t[it]=='0') onee++;
-						else {w.pb(onee);onee=0;}
-					}
-					// s.resize(min(ss,tt));
-					// w.resize(min(ss,tt));
-
-					forn(it, min(ss,tt)) {
-						forn(itt, max(w[it], q[it])) ans.pb('0');
-						ans.pb('1');
-					}
-					forsn(it, min(ss,tt), ss) {
-						forn(itt, q[it]) ans.pb('0');
-						ans.pb('1');
-					}
-					forsn(it, min(ss,tt), tt) {
-						forn(itt, w[it]) ans.pb('0');
-						ans.pb('1');
-					}
-					forn(itt, max(one,onee)) ans.pb('0');
-				}else {
-					//go 0
-					mx += min(prev-ss, prev-tt);
-					vector<int> q,w;int one=0, onee=0;
-					forsn(it, 0, prev) {
-						if(s[it]=='1') one++;
-						else {q.pb(one);one=0;}
-						if(t[it]=='1') onee++;
-						else {w.pb(onee);onee=0;}
-					}
-					// s.resizemin(prev-ss, prev-tt));
-					// w.resize(min(prev-ss, prev-tt));
-
-					forn(it,min(prev-ss, prev-tt)) {
-						forn(itt, max(w[it], q[it])) ans.pb('1');
-						ans.pb('0');
-					}
-					forsn(it, min(prev-ss, prev-tt), prev-ss) {
-						forn(itt, q[it]) ans.pb('1');
-						ans.pb('0');
-					}
-					forsn(it, min(prev-ss, prev-tt), prev-tt) {
-						forn(itt, w[it]) ans.pb('1');
-						ans.pb('0');
-					}
-					forn(itt, max(one,onee)) ans.pb('1');
-
-				}
-			}
-			// if(!ans.empty()) cout<<ans<<endl;
-			reverse(all(ans));
-			forn(i,ans.size()) anss.pb(ans[i]);
+	vector<ll> bb;
+	forn(i,n) {
+		cin >> a[i]; bb.pb(a[i]);
+	}
+	ll i = 0;
+	// vector<ll> ans;
+	// ans.assign(n, 1);
+	if(n == 2) {
+		cout << 2 << ln;
+		return;
+	}
+	ll ress = 0;
+	forn(i,n-1) {
+		ll j = i+1;
+		ll p  = a[j] - a[i];
+		while(j < n and a[j] - a[j-1] == p) j++;
+		if(j == n) {
+			ress = max(ress, n-i + (i>0));
 		}
-		reverse(all(anss));
-		// cout<<anss<<endl;
-		res[j]  = anss;
-		if(anss.size() <= (3*n)/2) {
-			cout<<anss << ln;
+		ress = max(ress, j-i + (i>0));
+		ress = max(ress, j-i + 1);
+		ll temp = a[j];
+		ll j0 = j;
+		a[j] = a[j-1] + p;
+		while(j < n and a[j] - a[j-1] == p) j++;
+		ress = max(ress, j-i);
+		a[j0] = temp;
+
+		temp = a[i+1];
+		a[i+1] = a[i+2]-a[i]
+
+	}
+	forn(i,n) assert(a[i] == bb[i]);
+	assert(ress>=3);
+	cout << ress << ln;
+	return;
+	
+	vector<ll> b;
+	b.pb(0);
+	while(b.back() < n-1) {
+		int i = b.back();
+		int j = i;
+		while(j < n-1 and (a[j+1] - a[j]) == (a[i+1] - a[i])) {
+			j++;
+		}
+		b.pb(j);
+	}
+	// forn(i,b.size()) cout<<b[i] << " ";
+	// cout<<ln;
+	if(b.size()==2 or n==2) {
+		cout << n << ln;
+		return;
+	}
+	ll ans = 2;
+	forsn(i,1, b.size()) {
+		if(b[i] - b[i-1] == 1) {
+			if(i < b.size()-1 and i>1) ans = max(ans, b[i+1]-b[i-2]+1ll);
+			else if(i > 1) ans = max(ans, b[i] - b[i-2] + 1);
+			else if(i < b.size()-1) ans = max(ans, b[i+1] - b[i] + 1);
+		}
+		if(i > 1 and b[i] - b[i-1] == 1 and b[i-1] - b[i-2] == 1 /*and a[b[i-1]] - a[b[i]] == a[b[i-1]] - a[b[i-2]]*/ ) {
+			ans = max(ans, 3ll);
+
+			if(i < b.size()-1 and i > 2 and (a[b[i]+1] - a[b[i]]) == (a[b[i-2]] - a[b[i-2]-1]) and 2*(a[b[i]+1] - a[b[i]]) == a[b[i]]-a[b[i-2]]) 
+				ans = max(ans, b[i+1]-b[i-3]+1ll);
+			else if(i > 2 and 2*(a[b[i-2]] - a[b[i-2]-1]) == a[b[i]]-a[b[i-2]]  )
+			 	ans = max(ans, b[i] - b[i-3] + 1);
+			else if(i < b.size()-1 and 2*(a[b[i]+1] - a[b[i]]) == a[b[i]]-a[b[i-2]] ) 
+				ans = max(ans, b[i+1] - b[i-2] + 1);
+			
+		}
+		ans = max(ans, b[i]-b[i-1]+2);
+	}
+	assert(ans>=3);
+	cout<<ans<<ln;
+}
+
+
+void go1() {
+	cin >> n;
+	// ll ans = -1;
+	// forsn(i,1,pr.size()) {
+	// 	if(n > 1e9) break;
+	// 	ll d =  pr[i]*pr[i-1];
+	// 	if(d > n) break;
+	// 	ans = d;
+	// }
+
+	// if(n <= 1e9) {
+	// 	cout << ans << ln;
+	// 	return;
+	// }
+	vector<ll> pr1;
+	ll d = floor(sqrt(n));
+	vector<ll> vis;
+	ll N = 5e6;
+
+	vis.assign(N + 1, 0);
+	forn(i, N) {
+		if(d-i <= 1) break;
+		if(vis[i]) continue;
+		ll p = -1;
+		// cout<<d-i<<endl;
+		forn(j, pr.size()) {
+			if((d-i) % pr[j] == 0) {
+				p = pr[j];
+				break;
+			}
+		}
+		// cout<<p<<endl;
+		if(p == -1 or p == d-i) {
+			pr1.pb(d-i);
+			if(pr1.size()>=2) break;
+		}
+		for(ll j = i; j < N and p > 0;j += p) {
+			vis[j] = 1;
+		}
+	}
+	vis.assign(N+1, 0);
+	forsn(i,1, N) {
+		if((d+i) * pr1[0] > n) break;
+		if(vis[i]) continue;
+		ll p = -1;
+		forn(j, pr.size()) {
+			if((d+i) % pr[j] == 0) {
+				p = pr[j];
+				break;
+			}
+		}
+		if(p == -1 or p == d+i) {
+			pr1.pb(d+i);
+			if(pr1.size()>=4) break;
+		}
+		for(ll j = i; j < N and p > 0;j += p) {
+			vis[j] = 1;
+		}
+	}
+
+	sort(all(pr1));
+	reverse(all(pr1));
+	// forn(i,pr1.size()) {
+	// 	cout<<pr1[i] << " ";
+	// }
+	// cout<<ln;
+	// assert(pr.size()==4);
+	forsn(i,1,pr1.size()) {
+		if(pr1[i]*pr1[i-1] <= n) {
+			cout << pr1[i]*pr1[i-1] << ln;
 			return;
 		}
 	}
-	assert(2>3);
-	
-
 }
 
 int main() {
     IO;
 	// fac();
+	// seive();
 	// cout.flush();
 	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
     cin >> t;
 	int tt = t;
     while(t--) {
-		// cout << "Case #"<<tt-t<<": ";
+		cout << "Case #"<<tt-t<<": ";
 		go();
 	}
 }
