@@ -178,160 +178,93 @@ ll n;
 // 	// cout << ans << ln;
 // }
 
-ll a[100005];
-void go() {
-	cin >> n;
-	vector<ll> bb;
-	forn(i,n) {
-		cin >> a[i]; bb.pb(a[i]);
+ll a[303030];ll k;
+map<ll,ll> t[606060];
+ll len[606060], ok[606060];
+void build() {
+	for(int i = n-1;i > 0;i--) {
+		for(auto u: t[i<<1]) t[i][u.first] = u.second;
+		for(auto u: t[i<<1 | 1]) t[i][u.first] += u.second;
+		len[i] = len[i<<1] + len[i<<1|1];
+		// ll le = len[i];
+		// ll p = -1;
+		// for(auto u: t[i]) {
+		// 	if(u.second > (le + 1)/2) {
+		// 		p = u.second; break;
+		// 	}
+		// }
+		// if(p==-1)
 	}
-	ll i = 0;
-	// vector<ll> ans;
-	// ans.assign(n, 1);
-	if(n == 2) {
-		cout << 2 << ln;
-		return;
-	}
-	ll ress = 0;
-	forn(i,n-1) {
-		ll j = i+1;
-		ll p  = a[j] - a[i];
-		while(j < n and a[j] - a[j-1] == p) j++;
-		if(j == n) {
-			ress = max(ress, n-i + (i>0));
-		}
-		ress = max(ress, j-i + (i>0));
-		ress = max(ress, j-i + 1);
-		ll temp = a[j];
-		ll j0 = j;
-		a[j] = a[j-1] + p;
-		while(j < n and a[j] - a[j-1] == p) j++;
-		ress = max(ress, j-i);
-		a[j0] = temp;
-
-		temp = a[i+1];
-		a[i+1] = a[i+2]-a[i]
-
-	}
-	forn(i,n) assert(a[i] == bb[i]);
-	assert(ress>=3);
-	cout << ress << ln;
-	return;
-	
-	vector<ll> b;
-	b.pb(0);
-	while(b.back() < n-1) {
-		int i = b.back();
-		int j = i;
-		while(j < n-1 and (a[j+1] - a[j]) == (a[i+1] - a[i])) {
-			j++;
-		}
-		b.pb(j);
-	}
-	// forn(i,b.size()) cout<<b[i] << " ";
-	// cout<<ln;
-	if(b.size()==2 or n==2) {
-		cout << n << ln;
-		return;
-	}
-	ll ans = 2;
-	forsn(i,1, b.size()) {
-		if(b[i] - b[i-1] == 1) {
-			if(i < b.size()-1 and i>1) ans = max(ans, b[i+1]-b[i-2]+1ll);
-			else if(i > 1) ans = max(ans, b[i] - b[i-2] + 1);
-			else if(i < b.size()-1) ans = max(ans, b[i+1] - b[i] + 1);
-		}
-		if(i > 1 and b[i] - b[i-1] == 1 and b[i-1] - b[i-2] == 1 /*and a[b[i-1]] - a[b[i]] == a[b[i-1]] - a[b[i-2]]*/ ) {
-			ans = max(ans, 3ll);
-
-			if(i < b.size()-1 and i > 2 and (a[b[i]+1] - a[b[i]]) == (a[b[i-2]] - a[b[i-2]-1]) and 2*(a[b[i]+1] - a[b[i]]) == a[b[i]]-a[b[i-2]]) 
-				ans = max(ans, b[i+1]-b[i-3]+1ll);
-			else if(i > 2 and 2*(a[b[i-2]] - a[b[i-2]-1]) == a[b[i]]-a[b[i-2]]  )
-			 	ans = max(ans, b[i] - b[i-3] + 1);
-			else if(i < b.size()-1 and 2*(a[b[i]+1] - a[b[i]]) == a[b[i]]-a[b[i-2]] ) 
-				ans = max(ans, b[i+1] - b[i-2] + 1);
-			
-		}
-		ans = max(ans, b[i]-b[i-1]+2);
-	}
-	assert(ans>=3);
-	cout<<ans<<ln;
 }
-
-
-void go1() {
-	cin >> n;
-	// ll ans = -1;
-	// forsn(i,1,pr.size()) {
-	// 	if(n > 1e9) break;
-	// 	ll d =  pr[i]*pr[i-1];
-	// 	if(d > n) break;
-	// 	ans = d;
-	// }
-
-	// if(n <= 1e9) {
-	// 	cout << ans << ln;
-	// 	return;
-	// }
-	vector<ll> pr1;
-	ll d = floor(sqrt(n));
-	vector<ll> vis;
-	ll N = 5e6;
-
-	vis.assign(N + 1, 0);
-	forn(i, N) {
-		if(d-i <= 1) break;
-		if(vis[i]) continue;
-		ll p = -1;
-		// cout<<d-i<<endl;
-		forn(j, pr.size()) {
-			if((d-i) % pr[j] == 0) {
-				p = pr[j];
-				break;
+map<ll,ll> query(int l, int r) {
+	map<ll,ll> res;
+	l += n; r += n;
+	while(l < r) {
+		if(l&1) {
+			for(auto u: t[l]) res[u.first] += u.second;
+			l++;
+		}
+		if(r&1){
+			r--;
+			for(auto u: t[r]) res[u.first] += u.second; 
+		}
+		l /= 2;
+		r /= 2;
+	}
+	return res;
+}
+ll q;
+void go() {
+	cin >> n >> q;
+	forn(i,n) {
+		len[i+n] = 1;
+		cin >> a[i];
+		t[i+n][a[i]]++;
+	}
+	build();
+	forsn(i, 1, 2*n) {
+		map<ll, ll> m = t[i];ll p = -1; 
+		for(auto u: m) {
+			if(u.second > (len[i]+1)/2) {
+				p = u.second;
 			}
 		}
-		// cout<<p<<endl;
-		if(p == -1 or p == d-i) {
-			pr1.pb(d-i);
-			if(pr1.size()>=2) break;
-		}
-		for(ll j = i; j < N and p > 0;j += p) {
-			vis[j] = 1;
-		}
+		if(p==-1) ok[i] = 1;
+		else ok[i] = 0;
 	}
-	vis.assign(N+1, 0);
-	forsn(i,1, N) {
-		if((d+i) * pr1[0] > n) break;
-		if(vis[i]) continue;
-		ll p = -1;
-		forn(j, pr.size()) {
-			if((d+i) % pr[j] == 0) {
-				p = pr[j];
-				break;
-			}
-		}
-		if(p == -1 or p == d+i) {
-			pr1.pb(d+i);
-			if(pr1.size()>=4) break;
-		}
-		for(ll j = i; j < N and p > 0;j += p) {
-			vis[j] = 1;
-		}
-	}
-
-	sort(all(pr1));
-	reverse(all(pr1));
-	// forn(i,pr1.size()) {
-	// 	cout<<pr1[i] << " ";
+	// forn(i,n+1) {
+	// 	map<ll,ll> m = query(0,i);
+	// 	for(auto u: m) cout<<u.first<<" " << u.second << ln;
+	// 	cout<<ln;
 	// }
-	// cout<<ln;
-	// assert(pr.size()==4);
-	forsn(i,1,pr1.size()) {
-		if(pr1[i]*pr1[i-1] <= n) {
-			cout << pr1[i]*pr1[i-1] << ln;
-			return;
+	forn(it,q) {
+		ll l, r;cin >> l >> r;
+		l--;
+		map<ll, ll> m = query(l, r);
+		// cout<<l << " " << r << " lr " << ln;
+		// for(auto u: m) cout<<u.first<<" " << u.second << ln;
+		// cout<<ln;
+
+		ll len = r-l;
+		ll p = -1;
+		ll chk = 0;
+		for(auto u: m) {
+			if(u.second > (len+1)/2) {
+				p = u.second; break;
+			}
+			chk += u.second;
+			if(chk>(len+1)/2) break;
 		}
+		// assert(len == chk);
+		if(p == -1) {
+			cout<<1<<ln;
+			continue;
+		}
+		p -= (len-p+1);
+		assert(p>0);
+		cout<<p + 1<<ln;
 	}
+	
 }
 
 int main() {
@@ -339,12 +272,12 @@ int main() {
 	// fac();
 	// seive();
 	// cout.flush();
-	mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
-    cin >> t;
+    // cin >> t;
 	int tt = t;
     while(t--) {
-		cout << "Case #"<<tt-t<<": ";
+		// cout << "Case #"<<tt-t<<": ";
 		go();
 	}
 }
