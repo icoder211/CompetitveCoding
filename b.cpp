@@ -178,94 +178,99 @@ ll n;
 // 	// cout << ans << ln;
 // }
 
-ll a[303030];ll k;
-map<ll,ll> t[606060];
-ll len[606060], ok[606060];
-void build() {
-	for(int i = n-1;i > 0;i--) {
-		for(auto u: t[i<<1]) t[i][u.first] = u.second;
-		for(auto u: t[i<<1 | 1]) t[i][u.first] += u.second;
-		len[i] = len[i<<1] + len[i<<1|1];
-		// ll le = len[i];
-		// ll p = -1;
-		// for(auto u: t[i]) {
-		// 	if(u.second > (le + 1)/2) {
-		// 		p = u.second; break;
-		// 	}
-		// }
-		// if(p==-1)
-	}
-}
-map<ll,ll> query(int l, int r) {
-	map<ll,ll> res;
-	l += n; r += n;
-	while(l < r) {
-		if(l&1) {
-			for(auto u: t[l]) res[u.first] += u.second;
-			l++;
-		}
-		if(r&1){
-			r--;
-			for(auto u: t[r]) res[u.first] += u.second; 
-		}
-		l /= 2;
-		r /= 2;
-	}
-	return res;
-}
-ll q;
-void go() {
-	cin >> n >> q;
-	forn(i,n) {
-		len[i+n] = 1;
-		cin >> a[i];
-		t[i+n][a[i]]++;
-	}
-	build();
-	forsn(i, 1, 2*n) {
-		map<ll, ll> m = t[i];ll p = -1; 
-		for(auto u: m) {
-			if(u.second > (len[i]+1)/2) {
-				p = u.second;
-			}
-		}
-		if(p==-1) ok[i] = 1;
-		else ok[i] = 0;
-	}
-	// forn(i,n+1) {
-	// 	map<ll,ll> m = query(0,i);
-	// 	for(auto u: m) cout<<u.first<<" " << u.second << ln;
-	// 	cout<<ln;
-	// }
-	forn(it,q) {
-		ll l, r;cin >> l >> r;
-		l--;
-		map<ll, ll> m = query(l, r);
-		// cout<<l << " " << r << " lr " << ln;
-		// for(auto u: m) cout<<u.first<<" " << u.second << ln;
-		// cout<<ln;
 
-		ll len = r-l;
-		ll p = -1;
-		ll chk = 0;
-		for(auto u: m) {
-			if(u.second > (len+1)/2) {
-				p = u.second; break;
-			}
-			chk += u.second;
-			if(chk>(len+1)/2) break;
-		}
-		// assert(len == chk);
-		if(p == -1) {
-			cout<<1<<ln;
-			continue;
-		}
-		p -= (len-p+1);
-		assert(p>0);
-		cout<<p + 1<<ln;
+int a[100];
+pair<int, int> dp[100][200000];
+
+set<int> rem;
+bool f(int i, int tar) {
+	if(i>=n) return false;
+	if(rem.count(i)) return f(i+1,tar);
+	if(tar < 0) return false;
+	if(dp[i][tar].first >= 0) return dp[i][tar].first;
+	if(i == n-1) {
+		dp[i][tar].first = (a[i] == tar);
+		dp[i][tar].second = dp[i][tar].first;
+		return dp[i][tar].first;
+	}
+	dp[i][tar].first = f(i+1, tar-a[i]);
+	if(dp[i][tar].first==0) {
+		dp[i][tar].first =  f(i+1, tar);
+		dp[i][tar].second = 0;
+		
+	} else {
+		dp[i][tar].second = 1;
+	}
+
+	return dp[i][tar].first;
+}
+
+void go() {
+	rem.clear();
+	cin >> n;
+	ll s = 0;
+	ll p = -1;
+	forn(i,n) {
+		cin >> a[i];
+		if(a[i]&1) p = i;
+		s += a[i];
 	}
 	
+	if(s&1) {cout<<0<<ln;return;}
+	forn(i, n) {
+		dp[i][0].first = 1;
+		dp[i][0].second = 0;
+		forsn(j,1, s+1) dp[i][j].first = -1;
+	}
+	// f(0,s/2);
+	// forn(i,n) {
+	// 	forn(j,s+1) cout<< dp[i][j].first << " ";
+	// 	cout<<ln;
+	// }
+	if(!f(0,s/2)) {cout<<0<<ln;return;}
+	if(p>-1) {
+		cout<<1<<ln;
+		cout<<p+1;
+		return;
+	}
+	vector<int> ans;
+	for(int it = 2;it < s/2;it += 2) {
+		if(f(0, it) and !f(0, (s-it)/2)) {
+			// recover it
+			ll ss = 0;
+			forn(i, n) {
+				dp[i][0].first = 1;
+				dp[i][0].second = 0;
+				forsn(j,1, s+1) {dp[i][j].first = -1; dp[i][j].second==-1;}
+			}
+			bool ok = f(0,it);
+			assert(ok);
+			
+			forn(i, n) {
+				if(dp[i][it].first == 1 ) {
+					assert(dp[i][it].second >= 0);
+					if(dp[i][it].second == 0) continue;
+					ans.pb(i);
+					rem.insert(i);
+					ss += a[i];
+				}
+			}
+			assert(ss==it);
+			forn(i, n) {
+				dp[i][0].first = 1;
+				dp[i][0].second = 0;
+				forsn(j,1, s+1) {dp[i][j].first = -1; dp[i][j].second==-1;}
+			}
+			if(!f(0, (s-it)/2)) break;
+			rem.clear();
+			ans.clear();
+		}
+	}
+	cout<<ans.size()<<ln;
+	forn(i,ans.size()) cout<<ans[i]+1 << " ";
+
 }
+
 
 int main() {
     IO;
