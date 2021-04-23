@@ -178,99 +178,26 @@ ll n;
 // 	// cout << ans << ln;
 // }
 
+ll q;
+ll a[101010];
+pair<ll, pair<int, int>> t[202020];
 
-int a[100];
-pair<int, int> dp[100][200000];
 
-set<int> rem;
-bool f(int i, int tar) {
-	if(i>=n) return false;
-	if(rem.count(i)) return f(i+1,tar);
-	if(tar < 0) return false;
-	if(dp[i][tar].first >= 0) return dp[i][tar].first;
-	if(i == n-1) {
-		dp[i][tar].first = (a[i] == tar);
-		dp[i][tar].second = dp[i][tar].first;
-		return dp[i][tar].first;
+pair<ll, pair<int, int>> comb(pair<ll, pair<int, int>> q, pair<ll, pair<int, int>> w) {
+	
+}
+void build() {
+	for(int i = n-1;i > 0;i--) {
+
 	}
-	dp[i][tar].first = f(i+1, tar-a[i]);
-	if(dp[i][tar].first==0) {
-		dp[i][tar].first =  f(i+1, tar);
-		dp[i][tar].second = 0;
-		
-	} else {
-		dp[i][tar].second = 1;
-	}
-
-	return dp[i][tar].first;
 }
 
 void go() {
-	rem.clear();
-	cin >> n;
-	ll s = 0;
-	ll p = -1;
-	forn(i,n) {
-		cin >> a[i];
-		if(a[i]&1) p = i;
-		s += a[i];
-	}
-	
-	if(s&1) {cout<<0<<ln;return;}
-	forn(i, n) {
-		dp[i][0].first = 1;
-		dp[i][0].second = 0;
-		forsn(j,1, s+1) dp[i][j].first = -1;
-	}
-	// f(0,s/2);
-	// forn(i,n) {
-	// 	forn(j,s+1) cout<< dp[i][j].first << " ";
-	// 	cout<<ln;
-	// }
-	if(!f(0,s/2)) {cout<<0<<ln;return;}
-	if(p>-1) {
-		cout<<1<<ln;
-		cout<<p+1;
-		return;
-	}
-	vector<int> ans;
-	for(int it = 2;it < s/2;it += 2) {
-		if(f(0, it) and !f(0, (s-it)/2)) {
-			// recover it
-			ll ss = 0;
-			forn(i, n) {
-				dp[i][0].first = 1;
-				dp[i][0].second = 0;
-				forsn(j,1, s+1) {dp[i][j].first = -1; dp[i][j].second==-1;}
-			}
-			bool ok = f(0,it);
-			assert(ok);
-			
-			forn(i, n) {
-				if(dp[i][it].first == 1 ) {
-					assert(dp[i][it].second >= 0);
-					if(dp[i][it].second == 0) continue;
-					ans.pb(i);
-					rem.insert(i);
-					ss += a[i];
-				}
-			}
-			assert(ss==it);
-			forn(i, n) {
-				dp[i][0].first = 1;
-				dp[i][0].second = 0;
-				forsn(j,1, s+1) {dp[i][j].first = -1; dp[i][j].second==-1;}
-			}
-			if(!f(0, (s-it)/2)) break;
-			rem.clear();
-			ans.clear();
-		}
-	}
-	cout<<ans.size()<<ln;
-	forn(i,ans.size()) cout<<ans[i]+1 << " ";
+	cin >> n >> q;
+	forn(i,n) cin >> a[i];
+
 
 }
-
 
 int main() {
     IO;
