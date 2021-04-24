@@ -39,25 +39,29 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	y=y0;
 	return g;
 }
+
+const ll N = 505;
 vector<ll> pr;
+vector<int> g[N];
 void seive() {
 	vector<ll> vis;
 	pr.clear();
-	vis.assign(1e7+1, 0);
-	ll i =0 ;
-	for(ll i = 2;i <= 1e7; i++ ) {
+	vis.assign(1e5+1, 0);
+	ll i = 0;
+	for(ll i = 2;i <= 1e5; i++ ) {
 		if(vis[i]) continue;
 		pr.pb(i);
 		// cout << i << " ";
-		for(ll j = i*1ll*i;j <= 1e7;j += i) {
+		for(ll j = i;j <= 1e5;j += i) {
 			vis[j] = 1;
+			g[j].pb(i);
 		}
 	}
 }
 
 
-// ll mod = 1e9+7;
-ll mod = 998244353;
+ll mod = 1e9+7;
+// ll mod = 998244353;
 ll f(int d) {
 	int ans = 0;
 	forn(i,32) {
@@ -109,93 +113,169 @@ ll ncr(ll a,ll b){
 }
 
 
-ll n;
-// ll a[200000]
-// ll p;
-// map<ll, set<ll> > m;
-// void go(){
-// 	m.clear();
-// 	cin >> n >> p;
-// 	ll mx = -1;
-// 	forn(i,n) {
-// 		cin >> a[i];
-// 		// mx = max(mx, a[i]);
-// 		m[a[i]].insert(i);
-// 	}
-// 	ll comps = 0
-// 	ll ans = 0;
-// 	ll iters = 0;
-// 	while(!m.empty()) {
-// 		if(m.begin()->second.empty()) {
-// 			m.erase(m.begin());
-// 			continue;
-// 		}
-// 		ll pos = *(m.begin()->second.begin());		
-// 		// cout << pos << ln;
-// 		// if(a[pos] > p) break;
-// 		m[a[pos]].erase(pos);
-// 		if(m[a[pos]].empty()) m.erase(a[pos]);
-// 		int i = pos+1;
-// 		while(i < n and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
-// 			m[a[i]].erase(i);
-// 			if(m[a[i]].empty()) m.erase(a[i]);
-// 			ans += min(p, a[pos]);
-// 			i++;
-// 		}
-// 		i = pos-1;
-// 		while(i >= 0 and __gcd(a[i], a[pos]) == a[pos] and m[a[i]].count(i)) {
-// 			m[a[i]].erase(i);
-// 			if(m[a[i]].empty()) m.erase(a[i]);
-// 			ans += min(p, a[pos]);
-// 			i--;
-// 		}
-// 		comps ++;
-// 	}
-// 	ans += (comps-1)* p;
-// 	cout << ans << ln;
-// 	return;
-// 	// forn(i,n) {
-// 	// 	if(a[i] >= p) {
-// 	// 		break;
-// 	// 	}
-// 	// 	if(m[a[i]] == 0) continue;
-// 	// 	m[a[i]]--;
-// 	// 	comps ++;
-// 	// 	ll d = 1;
-// 	// 	while(d* a[i] <= mx) {
-// 	// 		ll dd = d* a[i];
-// 	// 		if(m[dd] > 0) {
-// 	// 			ans += (m[dd]* a[i]);
-// 	// 			m[dd]=0;
-// 	// 		}
-// 	// 		d++;
-// 	// 	}
-// 	// }
-// 	// for(auto u: m) {
-// 	// 	comps += u.second;
-// 	// }
-// 	// ans += p* (comps-1);
-// 	// cout << ans << ln;
+ll n, q, m;
+ll md = 1e9+7;
+// set<ll> s;
+// pair<ll,ll> a[N];
+// ll nxt[N], par[N]={0}, nxt2[N];// next index and no. of partitions by then
+
+// bool chk(ll r) {
+// 	for(auto u: s) if(r%u == 0) return false;
+// 	return true;
 // }
 
-ll q;
-ll a[101010];
-pair<ll, pair<int, int>> t[202020];
+// void go() {
+// 	// cout << __gcd(66977, 91733)<< ln;
+// 	cin >> n >> q;
+// 	m = floor(sqrt(n));
+// 	forn(i,n) cin >> a[i];
+// 	forn(i,n) nxt[i] = -1;
+// 	ll i = 0;
+// 	while(i < n) {
+// 		int j = i+1;
+// 		// cout << i << ln;
+// 		while(j < n and i < j) {
+// 			// cout << i << ln;
+// 			if(!chk(a[j])) {
+// 				// cout << i << " " << j << " " << pro << " " << a[j] << ln;
+// 				nxt[i] = j;
+// 				for(auto u: g[a[i]]) s.erase(u);
+// 				i ++;
+// 				continue;
+// 			}
+// 			for(auto u: g[a[j]]) {
+// 				s.insert(u);
+// 			}
+// 			j++;
+// 		}
+// 		if(j == n) {
+// 			break;
+// 		}
+// 	}
+// 	forn(i,n) {
+// 		if(nxt[i] == -1) nxt[i] = n;
+// 		cout << i << " " << nxt[i] << endl;
+// 		assert(i < nxt[i] and nxt[i] <= n);
+// 	}
+// 	forsn(i,1,n) {
+// 		assert(nxt[i] >= nxt[i-1]);
+// 		if(nxt[i] > nxt[i-1]) {
+// 			if(__gcd(a[nxt[i-1]], a[i-1]) == 1) {
+// 				forn(i,n) {
+// 					cout << i << " " << nxt[i] << endl;
+// 				}
+// 				assert(2>3);
+// 			}
+// 		}
+// 	}
+// 	i = 0;
+// 	while(i < n) {
+// 		int j = i;
+// 		while(j < i+m and j < n) {
+// 			j = nxt[j];
+// 			par[i]++;
+// 			nxt2[i] = j;
+// 		}
+// 		i++;
+// 	}
+// 	forn(i,n) {
+// 		assert(i < nxt2[i]);
+// 	}
+// 	// forn(i,n) {
+// 		// cout<< i << " " << nxt[i] <<" " << par[i]<<endl;
+// 	// }
+// 	// return;
+// 	forn(it, q) {
+// 		int l, r; 
+// 		cin >> l >> r;
+// 		l--;
+// 		int p = l;
+// 		int ans = 0;
+// 		// while(nxt2[p] < r) {
+// 		// 	// cout<<p<<endl;
+// 		// 	ans += par[p];
+// 		// 	p = nxt2[p];
+// 		// }
+// 		while(p < r) {
+// 			// cout<<p<<endl;
+// 			p = nxt[p];
+// 			ans ++;
+// 		}
+// 		assert(ans > 0 and ans <= (r-l));
+// 		cout << ans << ln;
+// 	}
+// }
 
 
-pair<ll, pair<int, int>> comb(pair<ll, pair<int, int>> q, pair<ll, pair<int, int>> w) {
-	
-}
-void build() {
-	for(int i = n-1;i > 0;i--) {
+// void go1() {
+// 	cin >> n >> m;
+// 	ll ans[n][m];
+// 	// map<ll,ll> rev;
+// 	map<ll,ll> st[n];
+// 	forn(i,n) {
+// 		forn(j,m) {
+// 			cin >> a[i*m+j].first;
+// 			a[i*m+j].second = i*m+j;
+// 			ans[i][j] = -1;
+// 			st[i][ a[i*m+j] ]++;
+// 		}
+// 	}
+// 	sort(a,a+m*n);
+// 	forn(i,m) {
+// 		ll x = a[i].second/m; ll y = a[i].second%m;
+// 		ans[x][y] = a[i].first;
+// 		cout << x << " " << y << " " << a[i].first<< endl;
+// 		assert(st[x][a[i].first] > 0);
+// 		st[x][a[i].first]--;
+// 		if(st[x][a[i].first]==0) st[x].erase(a[i].first);
+// 	}
+// 	forn(i,n) {
+// 		forn(j,m) {
+// 			if(ans[i][j] == -1) {
+// 				ans[i][j] = st[i].begin()->first;
+// 				st[i].erase(st[i].begin());
+// 			}
+// 		}
+// 	}
+// 	// forn(it,m) {
+// 	// 	rev[a[it].second] = it;
+// 	// }
+// 	// forn(it,m) {
+// 	// 	int x = a[it].second/m;
+// 	// 	int y = a[it].second%m;
+// 	// 	if(y == it) continue;
+// 	// 	while(rev.find(x*m+y) != rev.end()) {
+// 	// 		ll p = rev[x*m+y];
+// 	// 		a[p].second = x*m + y;
+// 	// 		if(rev.find(x*m+p) != rev.end()) {
+// 	// 			rev[x*m+y] = rev[x*m + p];
+// 	// 			a[rev[x*m+p]].second = x*m+y;
+// 	// 		}
+// 	// 		rev.erase(x*m+y);
+// 	// 		swap(ans[x][y], ans[x][p]);
+// 	// 		break;
+// 	// 		y = p;
+// 	// 	}
+// 	// }
+// 	forn(i,n) {
+// 		forn(j,m) {
+// 			cout<<ans[i][j] << " ";
+// 		}
+// 		cout<<ln;
+// 	}
+// }
 
-	}
-}
-
+ll k;
+ll a[N];
+ll dp[N][20];
 void go() {
-	cin >> n >> q;
-	forn(i,n) cin >> a[i];
-
+	
+	cin >> n >> k;
+	forn(i,n) {
+		cin >> a[i];
+	}
+	stack<ll> st;
+	
 
 }
 
