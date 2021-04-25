@@ -40,21 +40,24 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	return g;
 }
 
-const ll N = 505;
+const ll N = 101;
 vector<ll> pr;
-vector<int> g[N];
+vector<ll> lp;
+// vector<int> g[N];
 void seive() {
+	int N = 2e5+1;
 	vector<ll> vis;
+	lp.assign(N, -1);
 	pr.clear();
-	vis.assign(1e5+1, 0);
+	vis.assign(N, 0);
 	ll i = 0;
-	for(ll i = 2;i <= 1e5; i++ ) {
+	for(ll i = 2;i <= N; i++ ) {
 		if(vis[i]) continue;
 		pr.pb(i);
-		// cout << i << " ";
-		for(ll j = i;j <= 1e5;j += i) {
+		for(ll j = i;j <= N;j += i) {
 			vis[j] = 1;
-			g[j].pb(i);
+			if(lp[j] == -1) lp[j] = i;
+			// g[j].pb(i);
 		}
 	}
 }
@@ -113,183 +116,123 @@ ll ncr(ll a,ll b){
 }
 
 
-ll n, q, m;
-ll md = 1e9+7;
-// set<ll> s;
-// pair<ll,ll> a[N];
-// ll nxt[N], par[N]={0}, nxt2[N];// next index and no. of partitions by then
-
-// bool chk(ll r) {
-// 	for(auto u: s) if(r%u == 0) return false;
-// 	return true;
-// }
-
-// void go() {
-// 	// cout << __gcd(66977, 91733)<< ln;
-// 	cin >> n >> q;
-// 	m = floor(sqrt(n));
-// 	forn(i,n) cin >> a[i];
-// 	forn(i,n) nxt[i] = -1;
-// 	ll i = 0;
-// 	while(i < n) {
-// 		int j = i+1;
-// 		// cout << i << ln;
-// 		while(j < n and i < j) {
-// 			// cout << i << ln;
-// 			if(!chk(a[j])) {
-// 				// cout << i << " " << j << " " << pro << " " << a[j] << ln;
-// 				nxt[i] = j;
-// 				for(auto u: g[a[i]]) s.erase(u);
-// 				i ++;
-// 				continue;
-// 			}
-// 			for(auto u: g[a[j]]) {
-// 				s.insert(u);
-// 			}
-// 			j++;
-// 		}
-// 		if(j == n) {
-// 			break;
-// 		}
-// 	}
-// 	forn(i,n) {
-// 		if(nxt[i] == -1) nxt[i] = n;
-// 		cout << i << " " << nxt[i] << endl;
-// 		assert(i < nxt[i] and nxt[i] <= n);
-// 	}
-// 	forsn(i,1,n) {
-// 		assert(nxt[i] >= nxt[i-1]);
-// 		if(nxt[i] > nxt[i-1]) {
-// 			if(__gcd(a[nxt[i-1]], a[i-1]) == 1) {
-// 				forn(i,n) {
-// 					cout << i << " " << nxt[i] << endl;
-// 				}
-// 				assert(2>3);
-// 			}
-// 		}
-// 	}
-// 	i = 0;
-// 	while(i < n) {
-// 		int j = i;
-// 		while(j < i+m and j < n) {
-// 			j = nxt[j];
-// 			par[i]++;
-// 			nxt2[i] = j;
-// 		}
-// 		i++;
-// 	}
-// 	forn(i,n) {
-// 		assert(i < nxt2[i]);
-// 	}
-// 	// forn(i,n) {
-// 		// cout<< i << " " << nxt[i] <<" " << par[i]<<endl;
-// 	// }
-// 	// return;
-// 	forn(it, q) {
-// 		int l, r; 
-// 		cin >> l >> r;
-// 		l--;
-// 		int p = l;
-// 		int ans = 0;
-// 		// while(nxt2[p] < r) {
-// 		// 	// cout<<p<<endl;
-// 		// 	ans += par[p];
-// 		// 	p = nxt2[p];
-// 		// }
-// 		while(p < r) {
-// 			// cout<<p<<endl;
-// 			p = nxt[p];
-// 			ans ++;
-// 		}
-// 		assert(ans > 0 and ans <= (r-l));
-// 		cout << ans << ln;
-// 	}
-// }
-
-
-// void go1() {
-// 	cin >> n >> m;
-// 	ll ans[n][m];
-// 	// map<ll,ll> rev;
-// 	map<ll,ll> st[n];
-// 	forn(i,n) {
-// 		forn(j,m) {
-// 			cin >> a[i*m+j].first;
-// 			a[i*m+j].second = i*m+j;
-// 			ans[i][j] = -1;
-// 			st[i][ a[i*m+j] ]++;
-// 		}
-// 	}
-// 	sort(a,a+m*n);
-// 	forn(i,m) {
-// 		ll x = a[i].second/m; ll y = a[i].second%m;
-// 		ans[x][y] = a[i].first;
-// 		cout << x << " " << y << " " << a[i].first<< endl;
-// 		assert(st[x][a[i].first] > 0);
-// 		st[x][a[i].first]--;
-// 		if(st[x][a[i].first]==0) st[x].erase(a[i].first);
-// 	}
-// 	forn(i,n) {
-// 		forn(j,m) {
-// 			if(ans[i][j] == -1) {
-// 				ans[i][j] = st[i].begin()->first;
-// 				st[i].erase(st[i].begin());
-// 			}
-// 		}
-// 	}
-// 	// forn(it,m) {
-// 	// 	rev[a[it].second] = it;
-// 	// }
-// 	// forn(it,m) {
-// 	// 	int x = a[it].second/m;
-// 	// 	int y = a[it].second%m;
-// 	// 	if(y == it) continue;
-// 	// 	while(rev.find(x*m+y) != rev.end()) {
-// 	// 		ll p = rev[x*m+y];
-// 	// 		a[p].second = x*m + y;
-// 	// 		if(rev.find(x*m+p) != rev.end()) {
-// 	// 			rev[x*m+y] = rev[x*m + p];
-// 	// 			a[rev[x*m+p]].second = x*m+y;
-// 	// 		}
-// 	// 		rev.erase(x*m+y);
-// 	// 		swap(ans[x][y], ans[x][p]);
-// 	// 		break;
-// 	// 		y = p;
-// 	// 	}
-// 	// }
-// 	forn(i,n) {
-// 		forn(j,m) {
-// 			cout<<ans[i][j] << " ";
-// 		}
-// 		cout<<ln;
-// 	}
-// }
-
-ll k;
-ll a[N];
-ll dp[N][20];
+int c,d;
+int a[N];
+vector<int> ad[N];
+int vis[N];
+ll dis[N]={0};
+map< pair<int,int> , int> m;
+int ans[1010];
+vector<pair<int,int>> pos, neg;
+set<int> done;
 void go() {
-	
-	cin >> n >> k;
-	forn(i,n) {
+	done.clear();
+	cin >> c >> d;
+	// cout<<c<<" " << d << endl;
+	ad[0].clear();
+	vis[0] = 0;
+	dis[0] = 0;
+	pos.clear(); neg.clear();
+	forsn(i,1,c) {
+		dis[i] = -1;
 		cin >> a[i];
+		
+		if(a[i] > 0) {
+			pos.pb({a[i], i});
+		}else {
+			neg.pb({-(a[i]+1), i});
+		}
+
+		ad[i].clear();
+		vis[i] = 0;
 	}
-	stack<ll> st;
-	
+	forn(i,d) {
+		int l , r;
+		cin >> l >> r;l --; r --;
+		m[{min(l,r), max(l,r)}] = i;
+		ad[l].pb(r);
+		ad[r].pb(l);
+	}
+	sort(all(pos));
+	reverse(all(pos));
+	for(auto p: pos) dis[p.second] = p.first;
+	sort(all(neg));
+	int i = 0;
+	int prev = 0;
+	// for(auto u: neg) {
+	// 	cout << u.first << " " << u.second << endl;
+	// }
+	int com = 0;
+	while(i < neg.size()) {
+		int p = neg[i].first - com; assert(p >= 0);
+		while(p > 0) {
+			if(pos.empty()) {
+				cout << i << " " << p << endl;
+				assert(2>3);
+			}
+			prev = pos.back().first;
+			pos.pop_back();
+			com ++;
+			p--;
+		}
+		int j = i;
+		while(j < neg.size() and neg[j].first == neg[i].first) {
+			dis[neg[j].second] = prev + 1;
+			j++;
+		}
+		prev++;
+		com += (j-i);
+		i = j;
+		while(!pos.empty() and pos.back().first == prev) {
+			pos.pop_back();
+			com++;
+		}
+	}
+	// forn(i,c) {
+	// 	cout << dis[i] << " " ;
+	// }
+	// cout << endl;
+	vis[0] = 1;
+	priority_queue<pair<int, int>> q;
+	for(auto u: ad[0]) q.push({-dis[u], u});
+	while(!q.empty()) {
+		auto u = q.top(); q.pop();
+		int p = u.second;
+		if(vis[p]) continue;
+		vis[p] = 1;
+		bool ok = false;
+		for(auto ch: ad[p]) {
+			if(vis[ch]) {
+				if(dis[ch] >= dis[p]) continue;
+				ok = true;
+				ans[m[{min(ch,p),max(ch,p)}]] = dis[p] - dis[ch];
+			} else {
+				q.push({-dis[ch], ch});
+			}
+		}
+		assert(ok);
+	}
+	forn(i,d) {
+		if(ans[i] == -1) ans[i] = 1e6;
+		cout << ans[i] << " ";
+	}
+	cout << ln;
+
 
 }
+
 
 int main() {
     IO;
 	// fac();
 	// seive();
-	// cout.flush();
+	cout.flush();
 	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 	int t; t = 1;
-    // cin >> t;
+    cin >> t;
 	int tt = t;
     while(t--) {
-		// cout << "Case #"<<tt-t<<": ";
+		cout << "Case #"<<tt-t<<": ";
 		go();
 	}
 }
