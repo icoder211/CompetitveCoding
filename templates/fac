@@ -1,0 +1,49 @@
+void fac(){
+    fact[0]=1;
+    infac[0]=1;
+    forsn(i,1,200009){
+        fact[i]=fact[i-1]*i;
+        fact[i]%=mod;
+        infac[i]=mi(fact[i]);
+        infac[i]%=mod;
+    }
+}
+ll ncr(ll a,ll b){
+    if(a<b || a<=0)return 0;
+    ll ans=fact[a];
+    ans*=infac[b];
+    ans%=mod;
+    ans*=infac[a-b];
+    ans%=mod;
+    return ans;
+}
+
+ll f(int d) {
+	int ans = 0;
+	forn(i,32) {
+		if(d & (1 << i)) {
+			ans ++;
+		}
+	}
+	return 32 - ans;
+}
+ll fact[300001],infac[300001];
+ll fe(ll a,ll b){
+    ll temp=a;
+    ll ans=1ll;
+    while(b){
+        if(b&1){
+            ans*=(ll)temp;
+            ans%=mod;
+        }
+        b/=2ll;
+        temp=temp*(ll)temp;
+        temp%=mod;
+    }
+    ans += mod;
+    ans %= mod;
+    return ans%mod;
+}
+ll mi(ll a){
+    return(fe(a,mod-2));
+}
