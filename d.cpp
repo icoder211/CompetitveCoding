@@ -39,29 +39,38 @@ typedef long double ld;
 #define f first
 #define se second // large prime for modulo
 const ll M = 1e9 + 7;
-ll fpow(ll a, ll b)
-{ // function for binary exponentiation
-    //b%=(M-1);
-    ll res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-        {
-            res = res * a; //%M;
-        }
-        a = a * a; //%M;
-        b >>= 1;
+const ll MAXN=100000;
+ll seg[4*MAXN];
+const ll MAX=100000;
+void build(ll v, ll st,ll end, ll a[]){
+    //out1(a[v]);
+    if (end==st) seg[v]=a[st];
+    else{
+        ll mid=(end+st)/2;
+        build(2*v,st,mid,a);
+        build(2*v+1,mid+1,end,a);
+        seg[v]=min(seg[2*v],seg[2*v+1]);
     }
-    return res;
 }
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
-ll inv(ll n)
-{
-    if (n == ll(1))
-    {
-        return 1;
+void update(ll v,ll st,ll end,ll index,ll var,ll a[]){
+    if (end==st) seg[v]=var;
+    else{
+        ll mid=(end+st)/2;
+        if (st<=index && index<=mid) update(2*v,st,mid,index,var,a);
+        else update(2*v+1,mid+1,end,index,var,a);
+        seg[v]=min(seg[2*v],seg[2*v+1]);
     }
-    return (M - (M / n) * inv(M % n) % M);
+}
+ll query(ll v,ll st,ll end,ll l,ll r,ll a[]){
+    if (st>r || end<l) return MAX;
+    else if (l<=st && r>=end) return seg[v];
+    else{
+        ll mid=(st+end)/2;
+        ll p1=query(2*v,st,mid,l,r,a);
+        ll p2=query(2*v+1,mid+1,end,l,r,a);
+        return min(p1,p2);
+    }
+
 }
 
 

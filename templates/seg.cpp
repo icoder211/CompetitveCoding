@@ -115,3 +115,39 @@ ll query(int l, int r) {
 	}
 	return res;
 }
+
+
+
+const ll MAXN=100000;
+ll seg[4*MAXN];
+const ll MAX=100000;
+void build(ll v, ll st,ll end, ll a[]){
+    //out1(a[v]);
+    if (end==st) seg[v]=a[st];
+    else{
+        ll mid=(end+st)/2;
+        build(2*v,st,mid,a);
+        build(2*v+1,mid+1,end,a);
+        seg[v]=min(seg[2*v],seg[2*v+1]);
+    }
+}
+void update(ll v,ll st,ll end,ll index,ll var,ll a[]){
+    if (end==st) seg[v]=var;
+    else{
+        ll mid=(end+st)/2;
+        if (st<=index && index<=mid) update(2*v,st,mid,index,var,a);
+        else update(2*v+1,mid+1,end,index,var,a);
+        seg[v]=min(seg[2*v],seg[2*v+1]);
+    }
+}
+ll query(ll v,ll st,ll end,ll l,ll r,ll a[]){
+    if (st>r || end<l) return MAX;
+    else if (l<=st && r>=end) return seg[v];
+    else{
+        ll mid=(st+end)/2;
+        ll p1=query(2*v,st,mid,l,r,a);
+        ll p2=query(2*v+1,mid+1,end,l,r,a);
+        return min(p1,p2);
+    }
+
+}

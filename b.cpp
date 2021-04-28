@@ -19,9 +19,14 @@ int dc[4] = {0, -1, 0, 1};
 
 ll exp(ll n, ll m, ll md) {
 	ll res = 1;
+	n %= md;
 	while(m > 0) {
 		if(m&1) res = (res * 1ll * n) % md;
-		n = (n*n) % md;
+		n = (n*1ll*n) % md;
+		if(n<0) {
+			// cout << n << " " << m << " " << md << endl;
+			assert(n>=0);
+		}
 		m /= 2;
 	}
 	return res;
@@ -40,7 +45,7 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	return g;
 }
 
-const ll N = 101;
+const ll N = 501;
 vector<ll> pr;
 vector<ll> lp;
 // vector<int> g[N];
@@ -65,15 +70,15 @@ void seive() {
 
 ll mod = 1e9+7;
 // ll mod = 998244353;
-ll f(int d) {
-	int ans = 0;
-	forn(i,32) {
-		if(d & (1 << i)) {
-			ans ++;
-		}
-	}
-	return 32 - ans;
-}
+// ll f(int d) {
+// 	int ans = 0;
+// 	forn(i,32) {
+// 		if(d & (1 << i)) {
+// 			ans ++;
+// 		}
+// 	}
+// 	return 32 - ans;
+// }
 ll fact[300001],infac[300001];
 ll fe(ll a,ll b){
     ll temp=a;
@@ -116,109 +121,38 @@ ll ncr(ll a,ll b){
 }
 
 
-int c,d;
-int a[N];
-vector<int> ad[N];
-int vis[N];
-ll dis[N]={0};
-map< pair<int,int> , int> m;
-int ans[1010];
-vector<pair<int,int>> pos, neg;
-set<int> done;
+int n, a, b;
+int c[N];
+bool chk(int p) {
+	if(p < n) return false;
+	vector<int> q;
+	forn(i, p+1) {
+		q.pb(0);
+	}
+	q[p] ++;
+	while(p >= 0) {
+		if(q[p] < c[p]) return false;
+		int d = q[p] - c[p];
+		q[p] = c[p];
+		if(p-a >= 0) q[p-a] += d;
+		if(p-b >= 0) q[p-b] += d;
+		p--;
+	}
+	return true;
+}
 void go() {
-	done.clear();
-	cin >> c >> d;
-	// cout<<c<<" " << d << endl;
-	ad[0].clear();
-	vis[0] = 0;
-	dis[0] = 0;
-	pos.clear(); neg.clear();
-	forsn(i,1,c) {
-		dis[i] = -1;
-		cin >> a[i];
-		
-		if(a[i] > 0) {
-			pos.pb({a[i], i});
-		}else {
-			neg.pb({-(a[i]+1), i});
-		}
-
-		ad[i].clear();
-		vis[i] = 0;
+	cin >> n >> a >> b;
+	forn(i,n) {
+		cin >> c[i];
 	}
-	forn(i,d) {
-		int l , r;
-		cin >> l >> r;l --; r --;
-		m[{min(l,r), max(l,r)}] = i;
-		ad[l].pb(r);
-		ad[r].pb(l);
-	}
-	sort(all(pos));
-	reverse(all(pos));
-	for(auto p: pos) dis[p.second] = p.first;
-	sort(all(neg));
-	int i = 0;
-	int prev = 0;
-	// for(auto u: neg) {
-	// 	cout << u.first << " " << u.second << endl;
-	// }
-	int com = 0;
-	while(i < neg.size()) {
-		int p = neg[i].first - com; assert(p >= 0);
-		while(p > 0) {
-			if(pos.empty()) {
-				cout << i << " " << p << endl;
-				assert(2>3);
-			}
-			prev = pos.back().first;
-			pos.pop_back();
-			com ++;
-			p--;
-		}
-		int j = i;
-		while(j < neg.size() and neg[j].first == neg[i].first) {
-			dis[neg[j].second] = prev + 1;
-			j++;
-		}
-		prev++;
-		com += (j-i);
-		i = j;
-		while(!pos.empty() and pos.back().first == prev) {
-			pos.pop_back();
-			com++;
+	forsn(i,n,501) c[i] = 0;
+	forsn(i, n, 403) {
+		if(chk(i)) {
+			cout << i+1 << ln;
+			return;
 		}
 	}
-	// forn(i,c) {
-	// 	cout << dis[i] << " " ;
-	// }
-	// cout << endl;
-	vis[0] = 1;
-	priority_queue<pair<int, int>> q;
-	for(auto u: ad[0]) q.push({-dis[u], u});
-	while(!q.empty()) {
-		auto u = q.top(); q.pop();
-		int p = u.second;
-		if(vis[p]) continue;
-		vis[p] = 1;
-		bool ok = false;
-		for(auto ch: ad[p]) {
-			if(vis[ch]) {
-				if(dis[ch] >= dis[p]) continue;
-				ok = true;
-				ans[m[{min(ch,p),max(ch,p)}]] = dis[p] - dis[ch];
-			} else {
-				q.push({-dis[ch], ch});
-			}
-		}
-		assert(ok);
-	}
-	forn(i,d) {
-		if(ans[i] == -1) ans[i] = 1e6;
-		cout << ans[i] << " ";
-	}
-	cout << ln;
-
-
+	cout << "IMPOSSIBLE\n";
 }
 
 
