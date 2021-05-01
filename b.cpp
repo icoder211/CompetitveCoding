@@ -6,7 +6,7 @@
 using namespace std;
 #define ln "\n"
 #define pb push_back
-#define IO ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
+#define Nos ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
 #define forn(i, n) for(int i = 0;i < n;i++)
 #define forsn(i, s, n) for(int i  = s;i < n;i++)
 #define all(v) v.begin(), v.end()
@@ -46,7 +46,8 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	return g;
 }
  
-const ll N = 202020;
+const int N = 201;
+ll md = 1e9+7;
 // vector<ll> pr;
 // vector<ll> lp;
 // // vector<int> g[N];
@@ -129,67 +130,131 @@ const ll N = 202020;
 // 	cout << ln;
 // }
 
-int n,m;
-vector<int> dp[101][10101];
-int ok[101][10101];
-vector<int> ans;
-vector<int> f(int n, int m) {
-	if(m == n*n) {
-		ans.pb(n);
-		dp[n][m].clear();
-		dp[n][m].pb(n);
-		return dp[n][m];
-	}
-	if(m < 0) return {};
-	if(ok[n][m] >= 0) return dp[n][m];
-	int it = 1;
-	// dp[n][m] = {};
-	int itt=-1;
-	while(it < n) {
-		if(it*it >= m) break;
-		vector<int> p = f(n- it, m- it*it);
-		if(p.size()==0) continue;
-		if( itt == -1 or dp[n][m].size() > p.size() ) {
-			dp[n][m] = p;
-			itt = it;
+
+ll n,m,b;
+vector<vector<ll>> a;
+ll ans = 0;
+vector<ll> col;
+
+ll dp[101010][200];
+ll sums(vector<ll> &col) {
+	forn(i,b+2) {
+		forn(j,m) {
+			dp[i][j] = 0;
 		}
-		it++;
 	}
-	if(itt > -1) {
-		dp[n][m].pb(itt);
-		ok[n][m] = 1;
-	} else ok[n][m] = 0;
-	return dp[n][m];
+	if(col.back() <= b+1) dp[col.back()][m-1] = 1;
+	dp[0][m-1] = 1;
+	
+	for(int j = m-1; j > 0;j--) {
+		forn(i, b+2) {
+			dp[i][j-1] += dp[i][j]; dp[i][j-1] %= md;
+			if(col[j] + i > b+1) continue;
+			dp[col[j] + i][j-1] += dp[i][j];
+			dp[col[j] + i][j-1] %= md;
+		}
+	}
+	// forn(i,m) cout << col[i] << " ";cout << ln;
+	// forn(i,b+1) {
+	// 	forn(j,m) {
+	// 		cout << dp[i][j] << " ";
+	// 	}
+	// 	cout << ln;
+	// }
+	return dp[b][0];
+}
+
+
+ll chk(int itt) {
+	col.clear();
+	forn(i,m) col.pb(0);
+	forn(i,20) {
+		if(itt & (1 << i)) {
+			// take row i
+			assert(i < n);
+			forn(j,m) col[j] += a[i][j];
+		}
+	}
+	// cout << "ITT " << itt << ln;
+	return sums(col);
 }
 void go1() {
-	ans.clear();
-	cin >> n >> m;
-	if(m > n*n) {cout<<-1<<ln;return;}
-	vector<int> p = f(n,m);
-	if(ok[n][m]) {
-		ans = dp[n][m];
-		cout << ans.size() << ln;
-		forn(i,ans.size()) cout << ans[i] << " ";
-		cout << ln;
-	}else cout << -1 << ln;
-
+	ans = 0;
+	cin >> n >> m >> b;
+	if(n > m) {
+		a.assign(m,{});
+		forn(i,n) {
+			forn(j,m) {
+				int in;cin >> in;
+				a[j].pb(in);
+			}
+		}
+		swap(n,m);
+	}else {
+		a.assign(n,{});
+		forn(i,n) {
+			a[i].clear();
+			forn(j,m) {
+				int in;cin >> in;
+				a[i].pb(in);
+			}
+		}
+	}
+	// forn(i,n) {forn(j,m)cout << a[i][j] << " "; cout << ln;}
+	assert(n <= 8);
+	if(n > 30) return;
+	forn(itt, 1 << n) {
+		ans += chk(itt);
+		ans %= md;
+	}
+	cout << ans << ln;
 
 }
 
+void go2() {
+	ans = 0;
+	cin >> n >> m >> b;
+	a.assign(n,{});
+	forn(i,n) {
+		a[i].clear();
+		forn(j,m) {
+			int in;cin >> in;
+			a[i].pb(in);
+		}
+	}
+	if(n*m > 10) return;
+	forn(i,1<<n) {
+		forn(j, 1<<m) {
+			ll sum = 0;
+			forn(it,32) {
+				if(i & (1 << it)) {
+					// take row it
+					forn(itt, 32) {
+						if(j & (1 << itt)) {
+							sum += a[it][itt];
+						}
+					}
+				}
+			}
+			if(sum == b) ans++;
+			ans %= md;
+		}
+	}
+	cout << ans << ln;
+}
 
 int main() {
-    IO;
+    Nos;
 	// seive();
-	// cout.flush();
 	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 	int t; t = 1;
     cin >> t;
 	int tt = t;
-	forn(i,101) forn(j,10001) ok[i][j] = -1;
+
     while(t--) {
 		// cout << "Case #"<<tt-t<<": ";
 		go1();
 	}
-	// forn(i,10) {forn(j,10) cout << dp[i][j] << " ";cout << ln;}
+	// fflush(stdout);
 }
