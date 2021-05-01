@@ -138,18 +138,18 @@ vector<ll> col;
 
 ll dp[101010][200];
 ll sums(vector<ll> &col) {
-	forn(i,b+2) {
+	forn(i,b+51) {
 		forn(j,m) {
 			dp[i][j] = 0;
 		}
 	}
-	if(col.back() <= b+1) dp[col.back()][m-1] = 1;
+	if(col.back() <= b+50) dp[col.back()][m-1] = 1;
 	dp[0][m-1] = 1;
 	
 	for(int j = m-1; j > 0;j--) {
-		forn(i, b+2) {
+		forn(i, b+51) {
 			dp[i][j-1] += dp[i][j]; dp[i][j-1] %= md;
-			if(col[j] + i > b+1) continue;
+			if(col[j] + i > b+51) continue;
 			dp[col[j] + i][j-1] += dp[i][j];
 			dp[col[j] + i][j-1] %= md;
 		}
@@ -201,8 +201,7 @@ void go1() {
 		}
 	}
 	// forn(i,n) {forn(j,m)cout << a[i][j] << " "; cout << ln;}
-	assert(n <= 8);
-	if(n > 30) return;
+	assert(n <= 14);
 	forn(itt, 1 << n) {
 		ans += chk(itt);
 		ans %= md;
