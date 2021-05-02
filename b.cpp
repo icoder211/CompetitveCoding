@@ -70,12 +70,16 @@ void go() {
 			L.pb(abs(cl[i]));
 			q += cl[i];
 		}
-		else {
+		else if(cl[i] > 0) {
 			w += cl[i];
 			R.pb(cl[i]);
 		}
 	}
 	q = -q;
+	if(q==w) {
+		cout << ans+q << ln;
+		return;
+	}
 	if(q > w) {
 		swap(L,R);
 		swap(q,w);
@@ -84,27 +88,49 @@ void go() {
 		cout << 0 << ln;
 		return;
 	}
+	forn(i,R.size()) {
+		if(q == 0) break;
+		if(R[i]&1) {
+			R[i]--;
+			ans++;
+			q--;
+		}
+	}
 	sort(all(R));
+
+	// vector<int> o,e;
+	// for(auto u: R) {
+	// 	if(u&1) {
+	// 		o.pb(u);
+	// 	}else e.pb(u);
+	// }
+	// sort(all(o));
+	// sort(all(e));
+	// R.clear();
+	// for(auto u: o) R.pb(u);
+	// for(auto u: e) R.pb(u);
 	
-	cout << q << " " << w << ln;
-	for(auto u: L) cout << u << " ";
-	cout << ln;
-	for(auto u: R) cout << u << " ";
-	cout << ln;
+	// cout << q << " " << w << endl;
+	// for(auto u: L) cout << u << " ";
+	// cout << endl;
+	// for(auto u: R) cout << u << " ";
+	// cout << endl;
 
 	int sum = 0;
 	int i = 0;
 	while(sum + R[i] <= q) {
 		sum += R[i];
 		i++;
-		assert(i < R.size());
+		if(i == R.size()) break;
 	}
+	assert(i < R.size());
 	ans += sum;
 	q -= sum;
 	ans += q;
 	R[i] -= q;
 	while(i < R.size()) {
 		ans += (R[i]+1) / 2;
+		i++;
 	}
 	cout << ans << ln;
 	
