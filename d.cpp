@@ -76,8 +76,13 @@ ll query(ll v,ll st,ll end,ll l,ll r,ll a[]){
 
 int main() {
         
+	//freopen("in.txt","r",stdin);
+    freopen("in.txt","w",stdout);
 
-
+    cout << 100 << endl;
+    for(int i = 0;i < 100;i++) {
+        cout << "1000000000000000000\n";
+    }
 
 
 }
