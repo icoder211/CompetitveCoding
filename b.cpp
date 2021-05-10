@@ -48,92 +48,109 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	return g;
 }
 
-const int N = 201010;
-int n, l, r;
-vector<int> cl;
+const int N = 20202;
+int n;
+int a[N];
+int t[2*N];
+void sub(int l) {
+	int r = 2*n;
+	for(r = 2*n, l += n; l < r;l/=2,r/=2) {
+		if(l&1) t[l++]--;
+		if(r&1) t[--r]--;		
+	}
+}
+int que(int l) {
+	int res = 0;
+	for(l += n;l > 0;l /= 2) res += t[l];
+	return res;
+}
+int ind(int i) {
+	int l = 0;
+	int r = n;
+	while(l < r) {
+		int m = (l+r)/2;
+		if(que(m) >= i) r = m;
+		else l = m+1;
+	}
+	return r;
+}
+int sz = 0;
+int out(int t,int i,int j,int x) {
+	cout << "? " << t << " " << i << " " << j << " " << x << endl;
+	int d;cin >> d;if(d==-1) exit(0);
+	return d;
+}
 void go() {
-	cin >> n >> l >> r;
-	cl.assign(n,0);
-	forn(it, l) {
-		int c;cin >> c;c--;
-		cl[c] --;
+	cin >> n;
+	sz = n;
+	forn(i,n) t[i+n] = i;
+	forn(i,n) a[i] = -1;
+	
+}
+
+vector<vector<int>> ad, ans;
+int leaf[N], par[N], lev[N];
+int root = -1;
+int dfs(int s, int p, int level) {
+	int lf = -1;
+	for(int i = ad[s].size()-1 ;i >= 0; i--) {
+		int u = ad[s][i];
+		if(u == p) continue;
+		lf = dfs(u, s, level+1);
 	}
-	forn(it, r) {
-		int c;cin >> c;c--;
-		cl[c] ++;
+	if(lf == -1) lf = s;
+	lev[s] = level;
+	par[s] = p;
+	leaf[s] = lf;
+	return leaf[s];
+}
+void solve(int s, int p) {
+	// int lf = -1;
+	for(int i = ad[s].size()-1;i >= 0;i--) {
+		int u = ad[s][i];
+		if(u == p) continue;
+		solve(u, s);
 	}
-	int ans = 0;
-	vector<int> L, R;
-	int q=0,w=0;
+	// leaf[s] = lf;
+
+	vector<int> vec;
+	forn(i, ad[s].size()) {if(ad[s][i] != p) {vec.pb(ad[s][i]);}}
+
+	for(int i = 0;(vec.size() > 1 + (s==root)) and (i < vec.size()-1-(s==root)); i++) {
+		// cout << vec[i] << " ";
+		if(vec[i] == p) continue;
+		ans.pb({s, vec[i], leaf[ vec[i+1] ], vec[i]});
+	}
+}
+
+void go1() {
+	root = -1;
+	cin >> n;
+	ans.clear();
+	ad.assign(n,{});
+	forn(i,n-1) {
+		int l,r;cin>>l>>r;l--;r--;
+		ad[l].pb(r);
+		ad[r].pb(l);
+	}
+	int res=0;
 	forn(i,n) {
-		if(cl[i] < 0) {
-			L.pb(abs(cl[i]));
-			q += cl[i];
-		}
-		else if(cl[i] > 0) {
-			w += cl[i];
-			R.pb(cl[i]);
-		}
+		if(ad[i].size() > 2) root = i;
+		res += max(0, (int)ad[i].size()-2);
 	}
-	q = -q;
-	if(q==w) {
-		cout << ans+q << ln;
-		return;
-	}
-	if(q > w) {
-		swap(L,R);
-		swap(q,w);
-	}
-	if(q==0 and w==0) {
+	if(root==-1) {
 		cout << 0 << ln;
 		return;
 	}
-	forn(i,R.size()) {
-		if(q == 0) break;
-		if(R[i]&1) {
-			R[i]--;
-			ans++;
-			q--;
-		}
+	dfs(root,root,0);
+	// forn(i,n) cout << leaf[i] << " ";cout << ln;
+	solve(root, root);
+	cout <<ans.size() << ln;
+	assert(ans.size() == res);
+	for(auto u: ans) {
+		for(auto uu: u) cout << uu+1 << " ";
+		cout << ln;
 	}
-	sort(all(R));
-
-	// vector<int> o,e;
-	// for(auto u: R) {
-	// 	if(u&1) {
-	// 		o.pb(u);
-	// 	}else e.pb(u);
-	// }
-	// sort(all(o));
-	// sort(all(e));
-	// R.clear();
-	// for(auto u: o) R.pb(u);
-	// for(auto u: e) R.pb(u);
-	
-	// cout << q << " " << w << endl;
-	// for(auto u: L) cout << u << " ";
-	// cout << endl;
-	// for(auto u: R) cout << u << " ";
-	// cout << endl;
-
-	int sum = 0;
-	int i = 0;
-	while(sum + R[i] <= q) {
-		sum += R[i];
-		i++;
-		if(i == R.size()) break;
-	}
-	assert(i < R.size());
-	ans += sum;
-	q -= sum;
-	ans += q;
-	R[i] -= q;
-	while(i < R.size()) {
-		ans += (R[i]+1) / 2;
-		i++;
-	}
-	cout << ans << ln;
-	
 }
 
 int main() {
@@ -149,7 +166,7 @@ int main() {
 
     while(t--) {
 		// cout << "Case #"<<tt-t<<": ";
-		go();
+		go1();
+		fflush(stdout);
 	}
-	// fflush(stdout);
 }
