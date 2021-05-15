@@ -153,6 +153,10 @@ void go1() {
 	}
 }
 
+void go() {
+	
+}
+
 int main() {
     Nos;
 	// seive();
