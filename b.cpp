@@ -48,11 +48,55 @@ ll gcd(ll c, ll d, ll &x, ll &y) {
 	return g;
 }
 
-const int N = 20202;
+const ll N = 1001;
 
-
+int n;
+int dp[N][N]; // dp[palin][rogue];
 void go() {
-	
+	cin >> n;
+	int r = 0, p = 0;
+	string s;cin >> s;
+	forn(i,n) {
+		if(s[i] == '0') {
+			if(s[i] != s[n-i-1]) {
+				r ++;
+			}else {
+				p ++;
+			}
+		}
+	}
+	if(p == 1 or p == 2) {
+		cout << "ALICE\n";return;
+	}
+	if(p == 0) {
+		if(r & 1) {
+			cout << "BOB\n";return;
+		}
+		cout << "ALICE\n";return;
+	}
+	if(r == 0) {
+		if(p)
+	}
+	if(p & 1) {
+		if(r&1) 
+		{
+			cout << "BOB\n";return;
+		}else cout << "ALICE\n";
+		return;
+	}
+	if(r&1) 
+		{
+			cout << "ALICE\n";return;
+		}else cout << "BOB\n";
+		return;
+	if(r == 0) {
+		if(p == 1) {
+			cout << "BOB\n";return;
+		}
+		if(p&1) {cout << "ALICE\n";return;}
+		else {cout << "BOB\n";return;}
+	}
+	cout << "ALICE\n";
 }
 
 int main() {
@@ -66,9 +110,18 @@ int main() {
 	int tt = t;
 
 
+	forn(i,N) {
+		dp[i][0] = ((i&1)>0);
+	}
+	dp[0][0] = 1;
+	dp[1][0] = 0;
+	forsn(j, 1, n) {
+
+	}
+
     while(t--) {
 		// cout << "Case #"<<tt-t<<": ";
-		go1();
-		fflush(stdout);
+		go();
+		// fflush(stdout);
 	}
 }
