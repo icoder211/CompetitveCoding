@@ -1,3 +1,3 @@
-P:/competitve_coding/contest/cmake-build-debug/CMakeFiles/contest.dir
-P:/competitve_coding/contest/cmake-build-debug/CMakeFiles/edit_cache.dir
-P:/competitve_coding/contest/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+P:/competitve_coding/clion/cmake-build-debug/CMakeFiles/contest.dir
+P:/competitve_coding/clion/cmake-build-debug/CMakeFiles/edit_cache.dir
+P:/competitve_coding/clion/cmake-build-debug/CMakeFiles/rebuild_cache.dir

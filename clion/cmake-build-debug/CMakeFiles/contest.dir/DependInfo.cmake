@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "P:/competitve_coding/contest/main.cpp" "P:/competitve_coding/contest/cmake-build-debug/CMakeFiles/contest.dir/main.cpp.obj"
+  "P:/competitve_coding/clion/main.cpp" "P:/competitve_coding/clion/cmake-build-debug/CMakeFiles/contest.dir/main.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
