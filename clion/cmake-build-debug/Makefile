@@ -110,17 +110,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named contest
+# Target rules for targets named clion
 
 # Build rule for target.
-contest: cmake_check_build_system
-	$(MAKE) -f CMakeFiles\Makefile2 contest
-.PHONY : contest
+clion: cmake_check_build_system
+	$(MAKE) -f CMakeFiles\Makefile2 clion
+.PHONY : clion
 
 # fast build rule for target.
-contest/fast:
-	$(MAKE) -f CMakeFiles\contest.dir\build.make CMakeFiles/contest.dir/build
-.PHONY : contest/fast
+clion/fast:
+	$(MAKE) -f CMakeFiles\clion.dir\build.make CMakeFiles/clion.dir/build
+.PHONY : clion/fast
 
 main.obj: main.cpp.obj
 
@@ -128,7 +128,7 @@ main.obj: main.cpp.obj
 
 # target to build an object file
 main.cpp.obj:
-	$(MAKE) -f CMakeFiles\contest.dir\build.make CMakeFiles/contest.dir/main.cpp.obj
+	$(MAKE) -f CMakeFiles\clion.dir\build.make CMakeFiles/clion.dir/main.cpp.obj
 .PHONY : main.cpp.obj
 
 main.i: main.cpp.i
@@ -137,7 +137,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles\contest.dir\build.make CMakeFiles/contest.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles\clion.dir\build.make CMakeFiles/clion.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -146,7 +146,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles\contest.dir\build.make CMakeFiles/contest.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles\clion.dir\build.make CMakeFiles/clion.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -155,7 +155,7 @@ help:
 	@echo ... all (the default if no target is provided)
 	@echo ... clean
 	@echo ... depend
-	@echo ... contest
+	@echo ... clion
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... main.obj

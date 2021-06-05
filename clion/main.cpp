@@ -110,85 +110,91 @@ mt19937_64 rng(SEED);
 
 /* ---------------- start of code ---------------- */
 
-const int N = 1e6+1;
-ll vis[N+1] = {0};
-vector<ll> pr;
-void seive() {
-    for(ll i = 2;i <= N;i ++) {
-        if(vis[i]) continue;
-        pr.pb(i);
-        for(ll j = i*1ll*i; j <= N; j+=i) {
-            vis[j] = 1;
-        }
+const int N = 301010;
+
+const ll md = 998244353;
+ll q,a0,c0;
+int c[N], a[N];
+int par[N][21] = {0};
+int f(int vi) {
+    for(int i = 19;i >= 0;i--) {
+        if(par[vi][i] == -1) continue;
+        if(a[par[vi][i]] <= 0) continue;
+        vi = par[vi][i];
     }
+    return vi;
 }
-//const int md = 1e9 + 7; //998244353;
-ll n;
-ll a[N];
-string s;
-
-int dp[N];
 void go() {
-    cin >> n >> s;
-    assert(n <= 200);
-    forn(i,n) a[i] = s[i] - '0';
-    forn(i,n-1) {
-        a[i+1] += a[i];
+    cin >> q >> a0 >> c0;
+    forn(i,N) {
+        a[i] = -1;
+        c[i] = -1;
     }
-    forn(i,n) dp[i] = -1;
-    deque<ll> mn0, mn1;
-    vector<int> ans(n);
-    forsn(k, 1, n) {
-        forn(i,n)
-
-        if(s[n-1] == '1') {
-            mn1.push_front(n-1);
-            dp[n-1]= 1;
-        }
-        else {
-            mn0.push_front(n-1);
-            dp[n-1] = 1e9;
-        }
-        for(int i = n-2;i >= 0;i--) {
-            while(!mn0.empty() && mn0.front() >= i+k) mn0.pop_front();
-            while(!mn1.empty() && mn1.front() >= i+k) mn1.pop_front();
-            if(s[i] == '1') {
-                dp[i] = dp[mn0.front()] + 1;
-                while(!mn1.empty() && dp[mn1.back()] >= dp[i] ) mn1.pop_back();
-                mn1.push_back(i);
-            } else {
-                dp[i] = dp[mn1.front()] + 1;
-                while(!mn0.empty() && dp[mn0.back()] >= dp[i] ) mn0.pop_back();
-                mn0.push_back(i);
+    forn(i,20) {
+        par[0][i] = -1;
+    }
+    a[0] = a0;
+    c[0] = c0;
+    forsn(qq,1,q+1) {
+        int tk;cin >> tk;
+        if(tk == 1) {
+            ll p, ai, ci;in3(p, ai, ci);
+            par[qq][0] = p;
+            forsn(i, 1, 20) par[qq][i] = par[par[qq][i-1]][i-1];
+            c[qq] = ci;
+            a[qq] = ai;
+        } else {
+            ll vi, wi;cin >> vi >> wi;ll wi0 = wi;
+            int p = f(vi);
+            int p0 = vi;
+            vector<int> pars;
+            while(p0 != p) {
+                pars.pb(p0);
+                p0 = par[p0][0];
             }
+            pars.pb(p);
+//            cout << vi << " ; ";
+//            disp(pars);
+//            forn(i,qq+1) cout << a[i] << " ";cout<<ln;
+//            forn(i,qq+1) cout << c[i] << " ";cout<<ln;
+            ll ct = 0;
+            for(int i = pars.size()-1;i >= 0;i--) {
+                if(wi >= a[pars[i]]) {
+                    ct += a[pars[i]] * 1ll* c[pars[i]];
+                    wi -= a[pars[i]];
+                    a[pars[i]] = 0;
+                } else {
+                    ct += c[pars[i]] * 1ll * wi;
+                    a[pars[i]] -= wi;
+                    wi = 0;
+                    break;
+                }
+            }
+            cout << wi0 - wi << " ";
+            cout << ct << endl;
         }
-        ans[k] = dp[0];
     }
-    forn(i,n) {
-        cout << (ans[i]==1e9 ? -1 : ans[i]) << " ";
-    }
-    cout << ln;
 }
 
 int main() {
     Nos;
 //    fflush(stdout);
-    cout<<fixed<<setprecision(11);    cerr<<fixed<<setprecision(10);
+//    cout<<fixed<<setprecision(11);    cerr<<fixed<<setprecision(10);
 //     freopen("input.txt","r",stdin);
 //     freopen("output.txt","w",stdout);
 
     ll tt = 1;
-    cin >> tt;
+//    cin >> tt;
     ll t = tt;
-    auto start  = std::chrono::high_resolution_clock::now();
+//    auto start  = std::chrono::high_resolution_clock::now();
 
     while(tt--){
 //        cout << "Case #" << t - tt << ": ";
         go();
     }
 
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
-    cerr << "Time taken : " << ((long double)duration.count())/((long double) 1e9) <<"s "<< endl;
+//    auto stop = std::chrono::high_resolution_clock::now();
+//    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
+//    cerr << "Time taken : " << ((long double)duration.count())/((long double) 1e9) <<"s "<< endl;
 }
 /* ---------------- end of code ---------------- */
