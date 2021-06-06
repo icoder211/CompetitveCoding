@@ -110,32 +110,25 @@ mt19937_64 rng(SEED);
 
 /* ---------------- start of code ---------------- */
 
-const int N = 301;
+const int N = 1001;
 const ll md = 998244353;
 
 int n;
-vector<int> a;
-set<int> s;
+string s;
+map<pair<ll, ll>, ll> m;
 void go() {
-    s.clear();
-    cin >> n;
-    a.assign(n,0);
+    cin >> n >> s;
+    m.clear();
+    ll d=0;
+    ll k=0;
     forn(i,n) {
-        cin >> a[i];
-        s.insert(a[i]);
+        if(s[i] == 'D') d++;
+        else k++;
+        ll g = __gcd(d,k);
+        m[{d/g, k/g}] ++;
+        cout << m[{d/g, k/g}] << " ";
     }
-    sort(all(a));
-    if(a[0] < 0) {
-        cout << "NO\n";
-        return;
-    }
-    a.clear();
-    forn(i, 101) {
-        a.pb(i);
-    }
-    cout << "YES\n";
-    cout << 101<<ln;
-    disp(a);
+    cout << ln;
 
 }
 

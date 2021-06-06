@@ -110,33 +110,53 @@ mt19937_64 rng(SEED);
 
 /* ---------------- start of code ---------------- */
 
-const int N = 301;
+const int N = 201010;
 const ll md = 998244353;
 
-int n;
-vector<int> a;
-set<int> s;
+ll n;
+set<ll> s;
+ll a[N];
 void go() {
     s.clear();
     cin >> n;
-    a.assign(n,0);
-    forn(i,n) {
-        cin >> a[i];
-        s.insert(a[i]);
-    }
-    sort(all(a));
-    if(a[0] < 0) {
-        cout << "NO\n";
-        return;
-    }
-    a.clear();
-    forn(i, 101) {
-        a.pb(i);
+    forn(i,n) cin >> a[i];
+    ll p = a[0];
+    s.insert(p);
+    auto u = s.find(p);
+    ll d = *u;assert(p==d);
+
+    forn(i,n-1) {
+        ll p = a[i+1];
+        ll d = *u;
+        if(p > d) {
+            u ++;
+            if(u == s.end()) {
+                s.insert(p);
+                u = s.find(p);
+                continue;
+            }
+            if(*u < p) {
+                cout << "NO\n";
+                return;
+            }
+            s.insert(p);
+            u = s.find(p);
+        } else if(p < d) {
+            if(u == s.begin()) {
+                s.insert(p);
+                u = s.find(p);
+                continue;
+            }
+            u --;
+            if(*u > p) {
+                cout << "NO\n";
+                return;
+            }
+            s.insert(p);
+            u = s.find(p);
+        }
     }
     cout << "YES\n";
-    cout << 101<<ln;
-    disp(a);
-
 }
 
 int main() {

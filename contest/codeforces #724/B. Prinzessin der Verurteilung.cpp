@@ -110,33 +110,54 @@ mt19937_64 rng(SEED);
 
 /* ---------------- start of code ---------------- */
 
-const int N = 301;
+const int N = 1001;
 const ll md = 998244353;
 
 int n;
-vector<int> a;
-set<int> s;
+string ss;
+int a[N];
 void go() {
-    s.clear();
     cin >> n;
-    a.assign(n,0);
-    forn(i,n) {
-        cin >> a[i];
-        s.insert(a[i]);
-    }
-    sort(all(a));
-    if(a[0] < 0) {
-        cout << "NO\n";
+    cin >> ss;
+    forn(i,n) a[i] = ss[i]-'a';
+    set<int> s;forn(i,26) s.insert(i);
+    forn(i,n) s.erase(a[i]);
+    if(!s.empty()) {
+        cout << (char)(*s.begin()+'a') << ln;
         return;
     }
-    a.clear();
-    forn(i, 101) {
-        a.pb(i);
+    set<string> s2;
+    forn(i,26) forn(j,26) {
+            string t;t.pb('a'+i);
+            t.pb('a'+j);
+            s2.insert(t);
+        }
+    forn(i,n-1) {
+        string t;t.pb(ss[i]);t.pb(ss[i+1]);
+        s2.erase(t);
     }
-    cout << "YES\n";
-    cout << 101<<ln;
-    disp(a);
-
+    if(!s2.empty()) {
+        cout << *s2.begin() << ln;
+        return;
+    }
+    s2.clear();
+    forn(i,26) forn(j,26) {
+            string t;t.pb('a');
+            t.pb('a'+i);
+            t.pb('a'+j);
+            s2.insert(t);
+            t[0] = 'b';
+            s2.insert(t);
+            t[0] = 'c';
+            s2.insert(t);
+            t[0] = 'd';
+            s2.insert(t);
+        }
+    forn(i,n-2) {
+        string t;t.pb(ss[i]);t.pb(ss[i+1]);t.pb(ss[i+2]);
+        s2.erase(t);
+    }
+    cout << *s2.begin() << ln;
 }
 
 int main() {

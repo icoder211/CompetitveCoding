@@ -17,31 +17,44 @@ typedef long double ld;
 typedef long long ll;
 
 const int N = 101010;
-int n;
-int a[N];
+int n, m;
+vector<vector<int>> ad;
+vector<int> vis;
+int dfs(int s) {
+    if(vis[s]) return 0;
+    // cerr << s << " ";
+    int ans = 0;
+    ans ++;
+    vis[s] = 1;
+    for(auto u: ad[s]) {
+        ans += dfs(u);
+    }
+    return ans;
+}
 void go() {
-	cin >> n;
-	forn(i,n)cin >> a[i];
-	int ans=0;
-	forn(i,n) {
-		if(a[i]>10) ans += (a[i]-10);
-	}
-	cout<<ans<<ln;
+    cin >> n >> m;
+	ad.assign(n,{});
+    forn(i,m) {
+        int a,b;cin >> a>>b;
+        a--;b--;
+        ad[a].pb(b);
+    }
+    int ans = 0;
+    forn(i,n) {
+        vis.assign(n,0);
+        ans += dfs(i);
+        // cerr << ln;
+    }
+    cout << ans << ln;
 }
 
 int main() {
     Nos;
-	// seive();
-	// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-	// freopen("in.txt","r",stdin);//freopen("output.txt","w",stdout);
-
 	int t; t = 1;
     // cin >> t;
 	int tt = t;
 
     while(t--) {
-		// cout << "Case #"<<tt-t<<": ";
 		go();
-		// fflush(stdout);
 	}
 }
