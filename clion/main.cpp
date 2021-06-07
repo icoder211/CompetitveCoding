@@ -111,21 +111,16 @@ mt19937_64 rng(SEED);
 /* ---------------- start of code ---------------- */
 
 const int N = 201010;
-
 const ll md = 998244353;
-pair<int,int> a[4];
+int n;
+string s;
 void go() {
-    forn(i,4) {
-        cin >> a[i].F;
-        a[i].S = i;
-    }
-    sort(a,a+4);
-    if(a[0].S + a[1].S <= 1 or a[0].S + a[1].S >= 5) {
-        cout << "NO\n";
-        return;
-    }
-    cout << "YES\n";
-
+    cin >> s;
+    n = s.size();
+    int a[4] = {0,13,14,19};
+    do {
+        
+    } while (next_permutation(a, a+4));
 }
 
 int main() {
