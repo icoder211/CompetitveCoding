@@ -110,21 +110,53 @@ mt19937_64 rng(SEED);
 
 /* ---------------- start of code ---------------- */
 
-const int N = 201010;
-
+const int N = 301010;
 const ll md = 998244353;
-pair<int,int> a[4];
+ll n, q, h;
+string s;
+int a[N], dp[N]={0};
 void go() {
-    forn(i,4) {
-        cin >> a[i].F;
-        a[i].S = i;
+    cin >> h;
+    cin >> s;
+    n = 1ll<<h;
+    forn(i,n-1) {
+        a[n-i-1] = (s[i] == '?' ? -1 : s[i]-'0');
     }
-    sort(a,a+4);
-    if(a[0].S + a[1].S <= 1 or a[0].S + a[1].S >= 5) {
-        cout << "NO\n";
-        return;
+    cin >> q;
+    for(int i = n-1;i >= n/2;i --) {
+        if(a[i] == 0 or a[i] == 1) {
+            dp[i] = 1;
+        } else dp[i] = 2;
     }
-    cout << "YES\n";
+    for(int i = n/2 - 1;i >= 1; i--) {
+        if(a[i] == 0) dp[i] = dp[i*2+1];
+        else if(a[i] == 1) dp[i] = dp[i*2];
+        else {
+            dp[i] = dp[i*2] + dp[i*2+1];
+        }
+    }
+    forn(_, q) {
+        int p; char c;cin >> p >> c;
+        int tk;
+        if(c == '?') tk = -1;
+        else tk = c-'0';
+        p--;
+        p = n-p-1;
+        a[p] = tk;
+        for(; p>=1;p/=2) {
+            if(p >= n/2) {
+                if(a[p] == 0 or a[p] == 1) dp[p] = 1;
+                else dp[p] = 2;
+                continue;
+            }
+            if(a[p] == 0) dp[p] = dp[p*2+1];
+            else if(a[p] == 1) dp[p] = dp[p*2];
+            else {
+                dp[p] = dp[p*2] + dp[p*2+1];
+            }
+        }
+        cout << dp[1] << ln;
+    }
 
 }
 
@@ -136,7 +168,7 @@ int main() {
 //     freopen("output.txt","w",stdout);
 
     ll tt = 1;
-    cin >> tt;
+//    cin >> tt;
     ll t = tt;
     auto start  = std::chrono::high_resolution_clock::now();
 

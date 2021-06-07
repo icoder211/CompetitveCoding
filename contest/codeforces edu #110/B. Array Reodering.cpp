@@ -111,21 +111,29 @@ mt19937_64 rng(SEED);
 /* ---------------- start of code ---------------- */
 
 const int N = 201010;
-
 const ll md = 998244353;
-pair<int,int> a[4];
+ll n;
+vector<ll> b;
+ll a[N];
 void go() {
-    forn(i,4) {
-        cin >> a[i].F;
-        a[i].S = i;
+    cin >> n;
+    arrin(a,n);
+    b.clear();
+    forn(i,n) {
+        if(a[i] & 1) {
+            b.pb(a[i]);
+        }
     }
-    sort(a,a+4);
-    if(a[0].S + a[1].S <= 1 or a[0].S + a[1].S >= 5) {
-        cout << "NO\n";
-        return;
+    ll ans = 0;
+    ll e = n - b.size();
+    ans += ((e*1ll*(e-1))/2);
+    ans += (e*1ll*(ll)b.size());
+    forn(i, b.size()) {
+        forsn(j, i+1, b.size()) {
+            ans += (__gcd(b[i], 2*b[j]) > 1);
+        }
     }
-    cout << "YES\n";
-
+    cout << ans << ln;
 }
 
 int main() {

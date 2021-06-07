@@ -110,43 +110,105 @@ mt19937_64 rng(SEED);
 
 /* ---------------- start of code ---------------- */
 
-const int N = 201010;
+const int N = 301010;
 
 const ll md = 998244353;
-pair<int,int> a[4];
-void go() {
-    forn(i,4) {
-        cin >> a[i].F;
-        a[i].S = i;
+ll q,a0,c0;
+ll c[N], a[N];
+int par[N][20];
+int f(int vi) {
+    for(int i = 19;i >= 0;i--) {
+        if(par[vi][i] == -1) continue;
+        if(a[par[vi][i]] <= 0) continue;
+        vi = par[vi][i];
     }
-    sort(a,a+4);
-    if(a[0].S + a[1].S <= 1 or a[0].S + a[1].S >= 5) {
-        cout << "NO\n";
-        return;
-    }
-    cout << "YES\n";
-
+    return vi;
 }
+void go() {
+    cin >> q >> a0 >> c0;
+    forn(i,q+1) {
+        a[i] = -1;
+        c[i] = -1;
+    }
+    forn(i,20) {
+        forn(j, q+1) par[j][i]=-1;
+    }
+    a[0] = a0;
+    c[0] = c0;
+    forsn(qq,1,q+1) {
+        int tk;cin >> tk;
+        if(tk == 1) {
+            ll p, ai, ci;in3(p, ai, ci);
+            par[qq][0] = p;
+            forsn(i, 1, 20) {
+                par[qq][i] = par[qq][i-1] == -1 ? -1 : par[par[qq][i-1]][i-1];
+            }
+            c[qq] = ci;
+            a[qq] = ai;
+        } else {
+            ll vi, wi;cin >> vi >> wi;ll wi0 = wi;
+
+            ll cost = 0;
+            while(wi > 0 and a[vi] > 0) {
+                int nearPar = f(vi);
+                int mn = min(a[nearPar], wi);
+                wi -= mn;
+                a[nearPar] -= mn;
+                cost += mn* 1ll* c[nearPar];
+            }
+            cout << wi0 - wi << " " << cost << endl;
+
+
+            /*
+            // // WHY DOES THIS GIVE TLE??
+            int p = f(vi);
+            int p0 = vi;
+            vector<int> pars;
+            while(p0 != p) {
+                pars.pb(p0);
+                p0 = par[p0][0];
+            }
+            pars.pb(p);
+            ll ct = 0;
+            for(int i = pars.size()-1;i >= 0;i--) {
+                if(wi >= a[pars[i]]) {
+                    ct += a[pars[i]] * 1ll* c[pars[i]];
+                    wi -= a[pars[i]];
+                    a[pars[i]] = 0;
+                } else {
+                    ct += c[pars[i]] * 1ll * wi;
+                    a[pars[i]] -= wi;
+                    wi = 0;
+                    break;
+                }
+            }
+            cout << wi0 - wi << " ";
+            cout << ct << endl;
+            */
+        }
+    }
+}
+
 
 int main() {
     Nos;
 //    fflush(stdout);
-    cout<<fixed<<setprecision(11);    cerr<<fixed<<setprecision(10);
+//    cout<<fixed<<setprecision(11);    cerr<<fixed<<setprecision(10);
 //     freopen("input.txt","r",stdin);
 //     freopen("output.txt","w",stdout);
 
     ll tt = 1;
-    cin >> tt;
+//    cin >> tt;
     ll t = tt;
-    auto start  = std::chrono::high_resolution_clock::now();
+//    auto start  = std::chrono::high_resolution_clock::now();
 
     while(tt--){
 //        cout << "Case #" << t - tt << ": ";
         go();
     }
 
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
-    cerr << "Time taken : " << ((long double)duration.count())/((long double) 1e9) <<"s "<< endl;
+//    auto stop = std::chrono::high_resolution_clock::now();
+//    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
+//    cerr << "Time taken : " << ((long double)duration.count())/((long double) 1e9) <<"s "<< endl;
 }
 /* ---------------- end of code ---------------- */
