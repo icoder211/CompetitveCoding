@@ -13,7 +13,7 @@ using namespace std;
 #define rforsn(i,e,s) for(ll i=e; i>=s; i--)
 #define vasort(v)         sort(v.begin(), v.end());
 #define vdsort(v)         sort(v.begin(), v.end(),greater<ll>());
-#define Nos ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
+#define Nos ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);cin.exceptions(ios::badbit | ios::failbit);
 #define     mem(a,b)        memset(a,b,sizeof(a))
 #define     sz(x)           ((int)size(x))
 #define     EB              emplace_back
@@ -113,14 +113,77 @@ mt19937_64 rng(SEED);
 const int N = 201010;
 const ll md = 998244353;
 int n;
+int a[N];
+int b[4] = {0,1,2,3};
 string s;
+map<char, int> m = {mp('A', 0), mp('N', 1), mp('O', 2), mp('T', 3)};
+string cset = "ANOT";
+int cnt[4] = {0};
+ll inv(vector<int>& p, int l, int r) {
+    if(r-l<=1) {
+        return 0;
+    }
+    int q =(l+r)/2;
+    ll ans = 0;
+    ans += inv(p, l, q);
+    ans += inv(p, q, r);
+    int i = l;
+    int j = q;
+    vector<int> pp;
+    while(i < q and j < r) {
+        if(p[i] <= p[j]) {
+            pp.pb(p[i]);
+            i++;
+        } else {
+            pp.pb(p[j]);
+            ans += (ll)q-i;
+            j++;
+        }
+    }
+    while(i < q) {
+        pp.pb(p[i]);
+        i++;
+    }
+    while(j < r) {
+        pp.pb(p[j]);
+        j++;
+    }
+    forsn(i, l, r) {
+        p[i] = pp[i-l];
+    }
+    return ans;
+}
 void go() {
     cin >> s;
     n = s.size();
-    int a[4] = {0,13,14,19};
+    forn(i,4) {
+        b[i] = i;
+        cnt[i] = 0;
+    }
+    forn(i,n) {
+        a[i] = m[s[i]];
+        cnt[a[i]]++;
+    }
+
+    string ans;
+    ll mx = -1;
     do {
-        
-    } while (next_permutation(a, a+4));
+        vector<int> p;
+        forn(i,n) {
+            p.pb(b[a[i]]);
+        }
+        ll d = inv(p, 0, n);
+        if(mx < d) {
+            mx = d;
+            ans.clear();
+            forn(i, 4) {
+                forn(j, cnt[b[i]]) {
+                    ans.pb(cset[b[i]]);
+                }
+            }
+        }
+    } while (next_permutation(b, b+4));
+    cout << ans << ln;
 }
 
 int main() {
