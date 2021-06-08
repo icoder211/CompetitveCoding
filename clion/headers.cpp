@@ -2,7 +2,45 @@
 // Created by anshu on 10-05-2021.
 //
 
+#pragma GCC target ("sse4.2")
+#include<bits/stdc++.h>
 
+using namespace std;
+
+#define F first
+#define S second
+#define pb push_back
+#define ln "\n"
+#define forn(i,e) for(ll i=0; i<e; i++)
+#define forsn(i,s,e) for(ll i=s; i<e; i++)
+#define rforn(i,e) for(ll i=e; i>=0; i--)
+#define rforsn(i,e,s) for(ll i=e; i>=s; i--)
+#define vasort(v)         sort(v.begin(), v.end());
+#define vdsort(v)         sort(v.begin(), v.end(),greater<ll>());
+#define Nos ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);cin.exceptions(ios::badbit | ios::failbit);
+#define     mem(a,b)        memset(a,b,sizeof(a))
+#define     sz(x)           ((int)size(x))
+#define     EB              emplace_back
+#define     flush           fflush(stdout)
+#define out1(x1) cout << x1 << endl
+#define out2(x1,x2) cout << x1 << " " << x2 << endl
+#define out3(x1,x2,x3) cout << x1 << " " << x2 << " " << x3 << endl
+#define out4(x1,x2,x3,x4) cout << x1 << " " << x2 << " " << x3 << " " << x4 << endl
+#define all(d) d.begin(), d.end()
+#define mp make_pair
+#define unordered_set(T) unordered_set<T, custom_hash>
+#define unordered_map(T1, T2) unordered_map<T1, T2, custom_hash>
+
+#define in1(x1) cin >> x1
+#define in2(x1,x2) cin >> x1 >> x2
+#define in3(x1,x2,x3) cin >> x1 >> x2 >> x3
+#define in4(x1,x2,x3,x4) cin >> x1 >> x2 >> x3 >> x4
+
+#define arrin(a, n) forn(i, n) cin >> a[i];
+#define arrout(a,n) forn(i,n) {cout << a[i] << " ";} cout << ln;
+
+#define indexed_set tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update>
+//change less to less_equal for non distinct pbds, but erase will bug
 /* ---------------- IO ----------------*/
 
 namespace IO
