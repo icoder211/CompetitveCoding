@@ -111,84 +111,76 @@ mt19937_64 rng(SEED);
 /* ---------------- start of code ---------------- */
 
 const int N = 201010;
-const ll md = 998244353;
 int n;
-int a[N];
-int b[4] = {0,1,2,3};
-string s;
-map<char, int> m = {mp('A', 0), mp('N', 1), mp('O', 2), mp('T', 3)};
-string cset = "ANOT";
-int cnt[4] = {0};
-ll inv(vector<int>& p, int l, int r) {
-    if(r-l<=1) {
-        return 0;
-    }
-    int q =(l+r)/2;
-    ll ans = 0;
-    ans += inv(p, l, q);
-    ans += inv(p, q, r);
-    int i = l;
-    int j = q;
-    vector<int> pp;
-    while(i < q and j < r) {
-        if(p[i] <= p[j]) {
-            pp.pb(p[i]);
-            i++;
-        } else {
-            pp.pb(p[j]);
-            ans += (ll)q-i;
-            j++;
-        }
-    }
-    while(i < q) {
-        pp.pb(p[i]);
-        i++;
-    }
-    while(j < r) {
-        pp.pb(p[j]);
-        j++;
-    }
-    forsn(i, l, r) {
-        p[i] = pp[i-l];
-    }
-    return ans;
-}
+map<string, string> q,w;
+map<string, ll> cnt;
 void go() {
-    cin >> s;
-    n = s.size();
-    forn(i,4) {
-        b[i] = i;
-        cnt[i] = 0;
-    }
+    q.clear();
+    w.clear();
+    cnt.clear();
+    cin >> n;
+    string var;
     forn(i,n) {
-        a[i] = m[s[i]];
-        cnt[a[i]]++;
-    }
-
-    string ans;
-    ll mx = -1;
-    do {
-        vector<int> p;
-        forn(i,n) {
-            p.pb(b[a[i]]);
+        string s;
+        cin >> s;
+        var = "";
+        int j = 0;
+        while(j < s.size()) {
+            int k = j;
+            while(k < s.size() and s[k] != ' ') k++;
+            var = s.substr(j, k-j);
+            j = k+1;
         }
-        ll d = inv(p, 0, n);
-        if(mx < d) {
-            mx = d;
-            ans.clear();
-            forn(i, 4) {
-                forn(j, cnt[b[i]]) {
-                    ans.pb(cset[b[i]]);
+        if(s[j] == ':') {
+            j += 3;
+            string val;
+            val = s.substr(j, s.size()-j);
+            q[var] = val.substr(0, 4);
+            w[var] = val.substr(max(0, (int)val.size()-4), 4);
+            ll ans = 0;
+            forn(it,val.size()) {
+                if(val.substr(it,4)=="haha")ans++;
+            }
+            cnt[var] = ans;
+        }
+        else {
+            j += 2;
+            string var1, var2;
+            while(j < s.size()) {
+                int k = j;
+                while(k < s.size() and s[k] != ' ') k++;
+                var1 = s.substr(j, k-j);
+                j = k+1;
+            }
+            var2 = s.substr(j, s.size()-j);
+            {
+                q[var] = q[var1];
+                int it = 0;
+                while(q[var].size() < 4 and it < q[var2].size()) {
+                    q[var] += q[var2][it++];
                 }
             }
+            {
+                w[var] = w[var2];
+                reverse(all(w[var]));
+                int it = (int)w[var1].size()-1;
+                while(w[var].size() < 4 and it >= 0) {
+                    w[var] += w[var1][it--];
+                }
+                reverse(all(w[var]));
+            }
+            cnt[var] = cnt[var1] + cnt[var2];
+            string ss = w[var1] + q[var2];
+            forn(it, ss.size()) {
+                if(ss.substr(it, 4) == "haha") cnt[var] ++;
+            }
         }
-    } while (next_permutation(b, b+4));
-    cout << ans << ln;
+    }
+    cout << cnt[var] << ln;
 }
 
 int main() {
-    Nos;
-//    fflush(stdout);
+//    Nos;
     cout<<fixed<<setprecision(11);    cerr<<fixed<<setprecision(10);
 //     freopen("input.txt","r",stdin);
 //     freopen("output.txt","w",stdout);
@@ -198,9 +190,11 @@ int main() {
     ll t = tt;
     auto start  = std::chrono::high_resolution_clock::now();
 
+
     while(tt--){
 //        cout << "Case #" << t - tt << ": ";
         go();
+//        fflush(stdout);
     }
 
     auto stop = std::chrono::high_resolution_clock::now();

@@ -42,7 +42,17 @@ using namespace std;
 #define indexed_set tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update>
 //change less to less_equal for non distinct pbds, but erase will bug
 /* ---------------- IO ----------------*/
-
+vector<int> pr;
+void seive() {
+    pr.clear();vector<int> vis(3e4+1,0);
+    for(int i = 2; i <= 3e4 ; ++i) {
+        if(vis[i]) continue;
+        pr.pb(i);
+        for(ll j = i*1ll*i; j <= 3e4; j += i) {
+            vis[j] = 1;
+        }
+    }
+}
 namespace IO
 {
     const int BUFFER_SIZE = 1 << 15;
