@@ -216,7 +216,9 @@ void prfac(int n = NPRR){
         }
     }
 }
-ll fact[300001],infac[300001];
+const int N = 1010101;
+const ll mod = 1e9+7;
+ll fact[N],infac[N];
 ll fe(ll a,ll b){
     ll temp=a;
     ll ans=1ll;
@@ -240,7 +242,7 @@ ll mi(ll a){
 void fac(){
     fact[0]=1;
     infac[0]=1;
-    forsn(i,1,2009){
+    forsn(i,1,N){
         fact[i]=fact[i-1]*i;
         fact[i]%=mod;
         infac[i]=mi(fact[i]);

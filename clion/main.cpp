@@ -112,71 +112,62 @@ mt19937_64 rng(SEED);
 
 const int N = 201010;
 int n;
-map<string, string> q,w;
-map<string, ll> cnt;
-void go() {
-    q.clear();
-    w.clear();
-    cnt.clear();
-    cin >> n;
-    string var;
-    forn(i,n) {
-        string s;
-        cin >> s;
-        var = "";
-        int j = 0;
-        while(j < s.size()) {
-            int k = j;
-            while(k < s.size() and s[k] != ' ') k++;
-            var = s.substr(j, k-j);
-            j = k+1;
-        }
-        if(s[j] == ':') {
-            j += 3;
-            string val;
-            val = s.substr(j, s.size()-j);
-            q[var] = val.substr(0, 4);
-            w[var] = val.substr(max(0, (int)val.size()-4), 4);
-            ll ans = 0;
-            forn(it,val.size()) {
-                if(val.substr(it,4)=="haha")ans++;
-            }
-            cnt[var] = ans;
-        }
-        else {
-            j += 2;
-            string var1, var2;
-            while(j < s.size()) {
-                int k = j;
-                while(k < s.size() and s[k] != ' ') k++;
-                var1 = s.substr(j, k-j);
-                j = k+1;
-            }
-            var2 = s.substr(j, s.size()-j);
-            {
-                q[var] = q[var1];
-                int it = 0;
-                while(q[var].size() < 4 and it < q[var2].size()) {
-                    q[var] += q[var2][it++];
-                }
-            }
-            {
-                w[var] = w[var2];
-                reverse(all(w[var]));
-                int it = (int)w[var1].size()-1;
-                while(w[var].size() < 4 and it >= 0) {
-                    w[var] += w[var1][it--];
-                }
-                reverse(all(w[var]));
-            }
-            cnt[var] = cnt[var1] + cnt[var2];
-            string ss = w[var1] + q[var2];
-            forn(it, ss.size()) {
-                if(ss.substr(it, 4) == "haha") cnt[var] ++;
-            }
-        }
+int a[N];
+vector<vector<int>> ans;
+void pr() {
+    int sz=ans.size();
+    forn(i,ans.size()) if(ans[i].empty()) sz--;
+    cout << sz << ln;
+//    cout << ans.size() << ln;
+    for(auto &u: ans) {
+        if(u.empty()) continue;
+        cout << u.size() << " ";
+        disp(u);
     }
-    cout << cnt[var] << ln;
+    exit(0);
+}
+void go() {
+    cin >> n;
+    ans.clear();
+    forn(i,n) cin >> a[i];
+    int p = 1;
+    while(p < n) {
+        // sort [1..p]
+        int ind = 0;
+        forn(i,n) {
+            if(a[i] == p) {
+                ind = i;break;
+            }
+        }
+        if(p == 1 and ind == n-1) {
+            p ++;
+            reverse(a,a+n);
+            continue;
+        }
+        ans.pb({});
+        forn(i,p-1) {
+            ans.back().pb(1);
+            reverse(a+i, a+i+1); // dummy
+        }
+        if(ind - (p-1) + 1 > 0) ans.back().pb(ind - (p-1) + 1);
+        if(n-1-ind > 0) ans.back().pb(n-1 - ind);
+        reverse(a+p-1, a + ind + 1);
+        reverse(a+ind+1, a+n);
+        if(p % 2 == 0) {
+            reverse(all(ans.back()));
+        }
+//        reverse(a,a+n);
+//        forn(i,n) cout << a[i] << " ";cout << ln;
+        p ++;
+
+    }
+    if(n % 2 == 0) {
+        ans.pb({});
+        forn(i,n) ans.back().pb(1);
+//        reverse(a,a+n);
+    }
+//    forn(i,n) cout << a[i] << " ";cout << ln;
+    pr();
 }
 
 int main() {
@@ -186,7 +177,7 @@ int main() {
 //     freopen("output.txt","w",stdout);
 
     ll tt = 1;
-    cin >> tt;
+//    cin >> tt;
     ll t = tt;
     auto start  = std::chrono::high_resolution_clock::now();
 
