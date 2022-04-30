@@ -11,10 +11,10 @@ using namespace std;
 #define S second
 #define pb push_back
 #define ln "\n"
-#define forn(i,e) for(ll i=0; i<e; i++)
-#define forsn(i,s,e) for(ll i=s; i<e; i++)
-#define rforn(i,e) for(ll i=e; i>=0; i--)
-#define rforsn(i,e,s) for(ll i=e; i>=s; i--)
+#define fo(i,e) for(ll i=0; i<e; i++)
+#define fosn(i,s,e) for(ll i=s; i<e; i++)
+#define rfo(i,e) for(ll i=e; i>=0; i--)
+#define rfosn(i,e,s) for(ll i=e; i>=s; i--)
 #define vasort(v)         sort(v.begin(), v.end());
 #define vdsort(v)         sort(v.begin(), v.end(),greater<ll>());
 #define Nos ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);cin.exceptions(ios::badbit | ios::failbit);
@@ -22,6 +22,7 @@ using namespace std;
 #define     sz(x)           ((int)size(x))
 #define     EB              emplace_back
 #define     flush           fflush(stdout)
+#define vi vector<int>
 #define out1(x1) cout << x1 << endl
 #define out2(x1,x2) cout << x1 << " " << x2 << endl
 #define out3(x1,x2,x3) cout << x1 << " " << x2 << " " << x3 << endl
@@ -36,8 +37,33 @@ using namespace std;
 #define in3(x1,x2,x3) cin >> x1 >> x2 >> x3
 #define in4(x1,x2,x3,x4) cin >> x1 >> x2 >> x3 >> x4
 
-#define arrin(a, n) forn(i, n) cin >> a[i];
-#define arrout(a,n) forn(i,n) {cout << a[i] << " ";} cout << ln;
+ 
+typedef long double ld;
+typedef long long ll;
+ 
+int dr[4] = {1, 0, -1, 0};
+int dc[4] = {0, -1, 0, 1};
+
+
+#define arrin(a, n) f/* custom hash for unordered map */
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+auto random_address = [] { char *p = new char; delete p; return uint64_t(p); };
+const uint64_t SEED = chrono::steady_clock::now().time_since_epoch().count() * (random_address() | 1);
+mt19937_64 rng(SEED);
+#define arrin fo(i, n) cin >> a[i];
+#define arrout(a,n) fo(i,n) {cout << a[i] << " ";} cout << ln;
 
 #define indexed_set tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update>
 //change less to less_equal for non distinct pbds, but erase will bug
@@ -242,7 +268,7 @@ ll mi(ll a){
 void fac(){
     fact[0]=1;
     infac[0]=1;
-    forsn(i,1,N){
+    fosn(i,1,N){
         fact[i]=fact[i-1]*i;
         fact[i]%=mod;
         infac[i]=mi(fact[i]);

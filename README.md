@@ -1,4 +1,2 @@
-/**
- * Author: icoder211
-  */
-Find contest solutions in "constests" folder.
+Author: icoder211
+Solutions to some of the contests I have given
